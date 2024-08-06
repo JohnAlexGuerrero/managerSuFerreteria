@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.db.models import Count
+#from sales.models import Bill
 
 # Create your models here.
 class Vendor(models.Model):
@@ -98,20 +99,22 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
+    number_purchase = models.CharField(max_length=50, unique=True)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     quantity = models.FloatField()
     price = models.FloatField()
     tax = models.ForeignKey(Tax, on_delete=models.CASCADE, null=True)
     total_amount = models.FloatField(editable=False, default=0)
+    # status = models.BooleanField(default=False)
     purchase_date = models.DateField(auto_now_add=True)
 
     class Meta:
         verbose_name = ("Purchase")
-        verbose_name_plural = ("Purchases")
+        verbose_name_plural = ("3. compras")
     
     def __str__(self):
-        return self.vendor.name
+        return self.number_purchase
 
     def save(self, *args, **kwargs):
         self.total_amount = self.quantity * self.price
@@ -132,80 +135,33 @@ class Purchase(models.Model):
         
         Inventory.objects.create(
             product=self.product,
-            purchase=self,
-            sale=None,
+            sale_quantity = 0,
             purchase_quantity=self.quantity,
-            sale_quantity=None,
             total_balance_quantity=totalBal
-        )
-
-class Customer(models.Model):
-    customer_name = models.CharField(max_length=60, blank=True)
-    customer_mobile = models.CharField(max_length=50)
-    customer_address = models.TextField()
-
-    class Meta:
-        verbose_name = ("Customer")
-        verbose_name_plural = ("Customers")
-
-    def __str__(self):
-        return self.customer_name
-
-    def get_absolute_url(self):
-        return reverse("Customer_detail", kwargs={"pk": self.pk})
-
-class Sale(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
-    quantity = models.FloatField()
-    price = models.FloatField()
-    total_amount = models.FloatField(editable=False, default=0)
-    sale_date = models.DateField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = ("Sale")
-        verbose_name_plural = ("Sales")
-
-    def save(self, *args, **kwargs):
-        self.total_amount = self.price * self.quantity
-        super(Sale, self).save(*args, **kwargs)
-        inventory = Inventory.objects.filter(
-            product=self.product
-        ).order_by('-id').first()
-
-        totalBal = 0
-        if inventory:
-            totalBal = inventory.total_balance_quantity - self.quantity
-        
-        Inventory.objects.create(
-            product = self.product,
-            purchase = None,
-            sale = self,
-            purchase_quantity = None,
-            total_balance_quantity = totalBal
         )
         
 class Inventory(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, default=0, null=True)
-    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, default=0, null=True)
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
+    #purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, default=0, null=True)
+    #sale = models.ForeignKey(Bill, on_delete=models.CASCADE, default=0, null=True, blank=True)
+    #vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
     purchase_quantity = models.FloatField(default=0, null=True)
     sale_quantity = models.FloatField(default=0, null=True)
     total_balance_quantity = models.FloatField(default=0)
+    created_at = models.DateField(auto_now_add=True)
 
     class Meta:
         verbose_name = ("Inventory")
-        verbose_name_plural = ("Inventories")
+        verbose_name_plural = ("1. Inventario")
 
     def product_unit(self):
         return self.product.unit.title
 
-    def purchase_date(self):
-        if self.purchase:
-            return self.purchase.purchase_date
-    
+    # def purchase_date(self):
+    #     if self.purchase:
+    #         return self.purchase.purchase_date
+    '''
     def sale_date(self):
         if self.sale:
             return self.sale.sale_date
+    '''

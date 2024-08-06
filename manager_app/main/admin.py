@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Unit, Vendor, Sale, Purchase,Tax, Inventory, Category, ListPrice
+from .models import Product, Unit, Vendor, Purchase,Tax, Inventory, Category, ListPrice
 from .forms import TaxForm
 
 # Register your models here.
@@ -30,17 +30,11 @@ class ProductAdmin(admin.ModelAdmin):
         for x in inventory:
             return x.total_balance_quantity
 
-@admin.register(Sale)
-class SaleAdmin(admin.ModelAdmin):
-    list_display = ['id', 'customer', 'product', 'quantity', 'price', 
-    'total_amount', 'sale_date']
-    search_fields = ['product__title']
-
 #listado de proveedores y compras hechas a cada proveedor
 @admin.register(Purchase)
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ['vendor','product','quantity','price','iva','vlr_uni','total_amount','purchase_date']
-    search_fields = ['product__title']
+    list_display = ['number_purchase','vendor','product','quantity','price','iva','vlr_uni','total_amount','purchase_date']
+    search_fields = ['product__title','vendor__name']
 
     def iva(self, obj):
         return f'{obj.tax}'
@@ -50,7 +44,7 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 @admin.register(Inventory)
 class InventoryAdmin(admin.ModelAdmin):
-    search_fields = ['product__title','product__unit__title',]
-    list_display = ['product','product_unit','purchase_date','sale_quantity','total_balance_quantity','vendor','customer']
+    search_fields = ['product__title',]
+    list_display = ['product','purchase_quantity','sale_quantity','product_unit','total_balance_quantity','created_at']
 
     

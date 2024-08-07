@@ -30,7 +30,7 @@ class Bill(models.Model):
 
     class Meta:
         verbose_name = ("Bill")
-        verbose_name_plural = ("Bills")
+        verbose_name_plural = ("4. Ventas")
 
     def __str__(self):
         return self.number_bill
@@ -47,7 +47,7 @@ class Order(models.Model):
 
     class Meta:
         verbose_name = ("Bill")
-        verbose_name_plural = ("Ventas")
+        verbose_name_plural = ("5. Pedidos")
     
     def __str__(self) -> str:
         return self.bill.number_bill

@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from django.db.models import Count
+from django.db.models import Count, Sum
 #from sales.models import Bill
 
 # Create your models here.
@@ -75,7 +75,8 @@ class Category(models.Model):
         return self.name_category
 
     def count_items(self):
-        return self.aggregate(Count('product_id'))
+        return Category.objects.filter(name_category=self).aggregate(Count('product'))['product__count']
+    
     
 class Product(models.Model):
     title = models.CharField(max_length=70, unique=True)
@@ -89,7 +90,7 @@ class Product(models.Model):
 
     class Meta:
         verbose_name = ("Product")
-        verbose_name_plural = ("Products")
+        verbose_name_plural = ("1. Products")
 
     def __str__(self):
         return self.title
@@ -152,7 +153,7 @@ class Inventory(models.Model):
 
     class Meta:
         verbose_name = ("Inventory")
-        verbose_name_plural = ("1. Inventario")
+        verbose_name_plural = ("2. Inventario")
 
     def product_unit(self):
         return self.product.unit.title

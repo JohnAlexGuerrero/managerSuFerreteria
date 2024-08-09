@@ -5,8 +5,22 @@ from django.db.models import Count, Sum
 
 # Register your models here.
 admin.site.register(Unit)
-admin.site.register(Vendor)
 admin.site.register(ListPrice)
+
+@admin.register(Vendor)
+class VendorAdmin(admin.ModelAdmin):
+    list_display = ['name','categories']
+    
+    def categories(self, obj):
+        list_category = []
+        query = Purchase.objects.filter(vendor=obj)
+        for item in query:
+            if item.product.category not in list_category:
+                list_category.append(item.product.category)
+            else:
+                continue
+        return list_category 
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -20,7 +34,10 @@ class CategoryAdmin(admin.ModelAdmin):
         items = Product.objects.filter(category__name_category=obj)
         for item in items:
             item_inventory = Inventory.objects.filter(product=item).order_by('-id').first()
-            total_sum += (item.price * item_inventory.total_balance_quantity)
+            if item_inventory:
+                total_sum += (item.price * item_inventory.total_balance_quantity)
+            else:
+                continue
         return f'$ {total_sum:,.1f}'    
 
 @admin.register(Tax)
@@ -48,7 +65,7 @@ class ProductAdmin(admin.ModelAdmin):
 class PurchaseAdmin(admin.ModelAdmin):
     list_display = ['number_purchase','vendor','product','quantity','price','iva','vlr_uni','total_amount','purchase_date']
     search_fields = ['product__title','vendor__name']
-    list_filter = ['purchase_date']
+    list_filter = ['purchase_date','number_purchase']
     list_per_page = 20
 
     def iva(self, obj):

@@ -12,7 +12,7 @@ class Vendor(models.Model):
 
     class Meta:
         verbose_name = ("Vendor")
-        verbose_name_plural = ("Vendors")
+        verbose_name_plural = ("3. Proveedores")
 
     def __str__(self):
         return self.name
@@ -100,7 +100,7 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
-    number_purchase = models.CharField(max_length=50, unique=True)
+    number_purchase = models.CharField(max_length=50, unique=False)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     quantity = models.FloatField()

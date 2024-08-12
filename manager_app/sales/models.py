@@ -25,12 +25,14 @@ class Bill(models.Model):
     number_bill = models.CharField(max_length=50, unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     total_amount = models.FloatField(blank=True, null=True, default=0)
+    is_paid = models.BooleanField(default=True)
     
     sale_date = models.DateField(auto_now_add=True)
 
     class Meta:
         verbose_name = ("Bill")
         verbose_name_plural = ("4. Ventas")
+        ordering = ('-number_bill',)
 
     def __str__(self):
         return self.number_bill

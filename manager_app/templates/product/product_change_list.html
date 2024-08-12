@@ -1,0 +1,28 @@
+{% extends 'admin/change_list.html' %}
+{% load static %}
+
+{% block result_list %}
+    <table class="results">
+        <thead>
+            <tr>
+                {% comment %} <th>{% column_header class="nombre" %}Title{% endcolumn_header %}</th>
+                <th>{% column_header class="precio" %}Price{% endcolumn_header %}</th>
+                <th>{% column_header class="fecha_creacion" %}Codebar{% endcolumn_header %}</th> {% endcomment %}
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result in cl.result_list %}
+            <tr>
+                <td>{{ result.title }}</td>
+                <td>{{ result.price }} €</td>
+                <td>{{ result.unit }}</td>
+                <td>
+                    {% comment %} <a href="{% url 'admin:Product_detail' result.id %}">Editar</a> {% endcomment %}
+                    {% comment %} <a href="{% url 'admin:products_product_delete' result.id %}">Eliminar</a> {% endcomment %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

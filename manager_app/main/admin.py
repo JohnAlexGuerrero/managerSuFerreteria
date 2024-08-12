@@ -4,12 +4,14 @@ from .forms import TaxForm
 from django.db.models import Count, Sum
 
 # Register your models here.
+
 admin.site.register(Unit)
 admin.site.register(ListPrice)
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
     list_display = ['name','categories']
+    list_per_page = 6
     
     def categories(self, obj):
         list_category = []
@@ -25,6 +27,9 @@ class VendorAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name_category','items','total_amount']
+    list_filter = ['name_category']
+    list_per_page = 8
+    ordering = ('name_category',)
     
     def items(self, obj):
         return obj.count_items()
@@ -50,12 +55,14 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['title','category__name_category']
     list_filter = ['category']
     list_per_page = 10
+    
+    # change_list_template = 'product/product_change_list.html'
+    
 
     def vlr_unit(self, obj):
         return f'$ {round(obj.price / obj.list_price.list_price_value):,.0f}'
         
     def balance_stock(self, obj):
-        count_quantity = 0
         inventory = Inventory.objects.filter(product=obj.id).order_by('-id')
         for x in inventory:
             return x.total_balance_quantity
@@ -79,5 +86,7 @@ class InventoryAdmin(admin.ModelAdmin):
     search_fields = ['product__title',]
     list_display = ['product','purchase_quantity','sale_quantity','product_unit','total_balance_quantity','created_at']
     list_filter = ['product__category']
+    list_per_page = 10
+    ordering = ('-id',)
 
     

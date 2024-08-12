@@ -1,0 +1,73 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block title %}Panel de Control - Mi Sitio{% endblock %}
+
+{% block content %}
+<div>
+    <div class="row">
+        <div class="col-sm-4">
+            {% include "includes/card_dash.html" with title='Balance'%}
+        </div>
+        <div class="col-sm-4">
+            {% include "includes/card_dash.html" with title='Ventas totales'%}
+        </div>
+        <div class="col-sm-4">
+            {% include "includes/card_dash.html" with title='Compras' %}
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <tr>
+            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+                <div class="text">
+                    <a href="?o=">Factura</a>
+                </div>
+            </th>
+            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+                <div class="text">
+                    <a href="?o=">Cliente</a>
+                </div>
+            </th>
+            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+                <div class="text">
+                    <a href="?o=">Valor</a>
+                </div>
+            </th>
+            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+                <div class="text">
+                    <a href="?o=">Medio de pago</a>
+                </div>
+            </th>
+            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+                <div class="text">
+                    <a href="?o=">Fecha y hora</a>
+                </div>
+            </th>
+            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+                <div class="text">
+                    <a href="?o=">Estado</a>
+                </div>
+            </th>
+          
+        </tr>
+        <tr>
+          <td>POS 445463434</td>
+          <td>Maria Anders</td>
+          <td>$ 45.000</td>
+          <td>Efectivo</td>
+          <td>12/ago/2024 | 4:37 PM</td>
+          <td>Pagada</td>
+        </tr>
+        <tr>
+          <td>POS 445463434</td>
+          <td>Maria Anders</td>
+          <td>$ 45.000</td>
+          <td>Efectivo</td>
+          <td>12/ago/2024 | 4:37 PM</td>
+          <td>Pagada</td>
+        </tr>
+    </table>
+</div>
+{{ block.super }}  Esto incluye el contenido original
+{% endblock %}

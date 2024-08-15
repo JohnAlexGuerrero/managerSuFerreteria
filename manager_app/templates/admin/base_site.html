@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Panel de Control - Mi Sitio{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Panel de Administración</a></h1>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h2>Bienvenido al Panel de Control</h2>
+    <p>Aquí puedes gestionar todos los aspectos de tu sitio web.</p>
+</div>
+{{ block.super }}  <!-- Esto incluye el contenido original -->
+{% endblock %}

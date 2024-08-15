@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Factura</title>
+    <!-- Agrega aquí los enlaces a tus archivos de CSS -->
+</head>
+<body>
+    <h1>Crear Nueva Factura</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Datos de la Factura</legend>
+            {{ form.as_p }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Detalles de la Factura</legend>
+            {{ order_formset.management_form }}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% comment %} {% for form in order_formset %} {% endcomment %}
+                    <tr>
+                        <td>{{ order_formset.bill }}</td>
+                        <td>{{ order_formset.product }}</td>
+                        <td>{{ order_formset.price }}</td>
+                        <td>{{ order_formset.quantity }}</td>
+                        <td>
+                            <!-- El subtotal se calcularía dinámicamente en la vista o mediante JavaScript -->
+                            {% if order_formset.instance.pk %}
+                                {{ order_formset.instance.subtotal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Botón para eliminar el detalle si es un formulario vacío -->
+                            {% if order_formset.instance.pk %}
+                                <input type="checkbox" name="{{ order_formset.prefix }}-DELETE"> Eliminar
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% comment %} {% endfor %} {% endcomment %}
+                </tbody>
+            </table>
+        </fieldset>
+
+        <button type="button" id="add-detail">Añadir Detalle</button>
+
+        <button type="submit">Guardar Factura</button>
+    </form>
+
+    <!-- Agrega aquí tus scripts de JavaScript, si es necesario -->
+    <script>
+        document.getElementById('add-detail').addEventListener('click', function() {
+            // JavaScript para clonar un formulario de detalle vacío
+            let formIdx = document.querySelectorAll('tbody tr').length;
+            let newForm = document.querySelector('tbody tr').cloneNode(true);
+
+            newForm.innerHTML = newForm.innerHTML.replace
+        }
+    </script>

@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
+
 from sales.models import Bill
 from sales.forms import BillForm, OrderForm
 from django.http import JsonResponse
@@ -12,6 +14,11 @@ def home(request):
 
 def list_bills(request):
     bills = Bill.objects.all().order_by('-id')
+    paginator = Paginator(bills, 8)
+    
+    page_number = request.GET.get('page')
+    print(request.GET.get('page'))
+    page_obj = paginator.get_page(page_number)
     return JsonResponse({
         "data": [
             {
@@ -22,8 +29,9 @@ def list_bills(request):
                 "date": bill.sale_date,
                 "is_paid": bill.is_paid
             }
-            for bill in bills
-        ]  
+            for bill in page_obj
+        ],
+        "pages": page_obj.paginator.num_pages
     })
 
 def create_bill(request):

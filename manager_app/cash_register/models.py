@@ -23,7 +23,7 @@ class Transaction(models.Model):
         verbose_name_plural = ("Transactions")
 
     def __str__(self):
-        return self.bill
+        return self.bill.number_bill
 
     def get_absolute_url(self):
         return reverse("Transaction_detail", kwargs={"pk": self.pk})

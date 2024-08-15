@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <table class="table table-striped">
+    <table class="table table-striped" id="table-invoices">
         <tr>
             <th class="sorting" tabindex="0" colspan="1" rowspan="1">
                 <div class="text">
@@ -51,23 +51,40 @@
             </th>
           
         </tr>
-        <tr>
-          <td>POS 445463434</td>
-          <td>Maria Anders</td>
-          <td>$ 45.000</td>
-          <td>Efectivo</td>
-          <td>12/ago/2024 | 4:37 PM</td>
-          <td>Pagada</td>
-        </tr>
-        <tr>
-          <td>POS 445463434</td>
-          <td>Maria Anders</td>
-          <td>$ 45.000</td>
-          <td>Efectivo</td>
-          <td>12/ago/2024 | 4:37 PM</td>
-          <td>Pagada</td>
-        </tr>
     </table>
 </div>
 {{ block.super }}  Esto incluye el contenido original
+
+<script>
+    const tableEl = document.querySelector('#table-invoices')
+    const getListInvoices = async()=>{
+        const resp = await fetch('http://localhost:8000/api/v1/sales/list-invoices/')
+        const respData = await resp.json()
+        respData.data.forEach(el =>{
+            setTableInvoices(el)
+        })
+    }
+
+    const setTableInvoices = (bill)=>{
+        const tr = document.createElement('tr')
+        
+        tr.innerHTML = `
+            <td>${bill.number_bill}</td>
+            <td>${bill.customer}</td>
+            <td>$ ${bill.value}</td>
+            <td>Efectivo</td>
+            <td>${bill.date} | 4:37 PM</td>
+            <td>${bill.is_paid}</td>
+        `
+        tableEl.appendChild(tr)
+        
+    }
+
+    getListInvoices()
+</script>
 {% endblock %}
+
+{% block javascript %}
+
+{% endblock javascript %}
+

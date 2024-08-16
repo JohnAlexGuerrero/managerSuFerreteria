@@ -5,18 +5,8 @@
 
 {% block content %}
 <div>
-    <div class="row">
-        <div class="col-sm-4">
-            {% include "includes/card_dash.html" with title='Balance'%}
-        </div>
-        <div class="col-sm-4">
-            {% include "includes/card_dash.html" with title='Ventas totales'%}
-        </div>
-        <div class="col-sm-4">
-            {% include "includes/card_dash.html" with title='Compras' %}
-        </div>
-    </div>
-
+    {% include "includes/card_dash.html" %}
+    
     <table class="table table-striped" id="table-invoices">
         <tr>
             <th class="sorting" tabindex="0" colspan="1" rowspan="1">
@@ -82,17 +72,12 @@
     const getLocationBrowser = ()=>{
         let currentUrl = window.location.href
         let url = currentUrl.replace("sales","api/v1/sales/list-invoices")
-        
         return url
     }
     
     const paginationInvoices = (num)=>{
         for(let i=0; i < num; i++){
             const li = document.createElement('li')
-
-            if(i == 0){
-                li.classList.add('page-item','active')
-            }
             
             li.innerHTML = `
                 <li class="page-item"><a class="page-link" href="?page=${i + 1}">${i + 1}</a></li>
@@ -113,14 +98,8 @@
             <td class="badge ${bill.is_paid ? 'text-bg-secondary' : 'text-bg-primary'}">${bill.is_paid ? 'Cancelado' : 'Pendiente'}</td>
         `
         tableEl.appendChild(tr)
-        
     }
 
     getListInvoices()
 </script>
 {% endblock %}
-
-{% block javascript %}
-
-{% endblock javascript %}
-

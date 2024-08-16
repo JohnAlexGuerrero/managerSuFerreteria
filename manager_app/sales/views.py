@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from django.db.models import Sum
 
 from sales.models import Bill
+from main.models import Purchase
+
 from sales.forms import BillForm, OrderForm
 from django.http import JsonResponse
 
@@ -17,7 +20,6 @@ def list_bills(request):
     paginator = Paginator(bills, 8)
     
     page_number = request.GET.get('page')
-    print(request.GET.get('page'))
     page_obj = paginator.get_page(page_number)
     return JsonResponse({
         "data": [
@@ -32,6 +34,16 @@ def list_bills(request):
             for bill in page_obj
         ],
         "pages": page_obj.paginator.num_pages
+    })
+
+def total_balance(request):
+    total_sales = Bill.objects.all().aggregate(Sum('total_amount'))['total_amount__sum']
+    total_purchase = Purchase.objects.all().aggregate(Sum('total_amount'))['total_amount__sum']
+    total_balance = total_sales - total_purchase
+    return JsonResponse({
+        "balance": total_balance,
+        "ventas": total_sales,
+        "compras": total_purchase
     })
 
 def create_bill(request):

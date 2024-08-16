@@ -5,19 +5,9 @@
 
 {% block content %}
 <div>
-    <div class="row">
-        <div class="col-sm-4">
-            {% include "includes/card_dash.html" with title='Balance'%}
-        </div>
-        <div class="col-sm-4">
-            {% include "includes/card_dash.html" with title='Ventas totales'%}
-        </div>
-        <div class="col-sm-4">
-            {% include "includes/card_dash.html" with title='Compras' %}
-        </div>
-    </div>
-
-    <table class="table table-striped">
+    {% include "includes/card_dash.html" %}
+    
+    <table class="table table-striped" id="table-invoices">
         <tr>
             <th class="sorting" tabindex="0" colspan="1" rowspan="1">
                 <div class="text">
@@ -51,23 +41,65 @@
             </th>
           
         </tr>
-        <tr>
-          <td>POS 445463434</td>
-          <td>Maria Anders</td>
-          <td>$ 45.000</td>
-          <td>Efectivo</td>
-          <td>12/ago/2024 | 4:37 PM</td>
-          <td>Pagada</td>
-        </tr>
-        <tr>
-          <td>POS 445463434</td>
-          <td>Maria Anders</td>
-          <td>$ 45.000</td>
-          <td>Efectivo</td>
-          <td>12/ago/2024 | 4:37 PM</td>
-          <td>Pagada</td>
-        </tr>
     </table>
+
+    <nav aria-label="...">
+        <ul class="pagination pagination-md" id="id-paginator">
+          <!-- <li class="page-item active" aria-current="page">
+            <span class="page-link">1</span>
+          </li> -->
+        </ul>
+    </nav>
 </div>
 {{ block.super }}  Esto incluye el contenido original
+
+<script>
+    const tableEl = document.querySelector('#table-invoices')
+    const paginatorEl = document.querySelector('#id-paginator')
+    
+    const getListInvoices = async()=>{
+        let url = getLocationBrowser()
+        const resp = await fetch(url)
+        const respData = await resp.json()
+        respData.data.forEach(el =>{
+            setTableInvoices(el)
+        })
+
+        paginationInvoices(respData.pages)
+        getLocationBrowser()
+    }
+
+    const getLocationBrowser = ()=>{
+        let currentUrl = window.location.href
+        let url = currentUrl.replace("sales","api/v1/sales/list-invoices")
+        return url
+    }
+    
+    const paginationInvoices = (num)=>{
+        for(let i=0; i < num; i++){
+            const li = document.createElement('li')
+            
+            li.innerHTML = `
+                <li class="page-item"><a class="page-link" href="?page=${i + 1}">${i + 1}</a></li>
+            `
+            paginatorEl.appendChild(li)
+        }
+    }
+
+    const setTableInvoices = (bill)=>{
+        const tr = document.createElement('tr')
+        
+        tr.innerHTML = `
+            <td>${bill.number_bill}</td>
+            <td>${bill.customer}</td>
+            <td>$ ${bill.value}</td>
+            <td>Efectivo</td>
+            <td>${bill.date} | 4:37 PM</td>
+            <td class="badge ${bill.is_paid ? 'text-bg-secondary' : 'text-bg-primary'}">${bill.is_paid ? 'Cancelado' : 'Pendiente'}</td>
+        `
+        tableEl.appendChild(tr)
+    }
+
+    getListInvoices()
+</script>
 {% endblock %}

@@ -1,0 +1,136 @@
+<style>
+.card-product {
+    position: relative;
+    width: 10.5em;
+    height: 12em;
+    border: 0;
+    /*box-shadow: 0px 1px 13px rgba(0,0,0,0.1);*/
+    cursor: pointer;
+    transition: all 120ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    padding: 0.5em;
+    padding-bottom: 3.4em;
+  }
+  
+  .card-product::after {
+    content: "Add to Cart";
+    padding-top: 1.25em;
+    padding-left: 1.25em;
+    position: absolute;
+    left: 0;
+    bottom: -60px;
+    background: #00AC7C;
+    color: #fff;
+    height: 2.5em;
+    width: 90%;
+    transition: all 80ms;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0;
+  }
+  
+  .card-product .title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+    position: absolute;
+    left: 0.625em;
+    bottom: 1.875em;
+    font-weight: 700;
+    color: #000;
+  }
+  
+  .card-product .price {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 0.9em;
+    position: absolute;
+    left: 0.625em;
+    bottom: 0.625em;
+    color: #000;
+  }
+  
+  .card-product:hover::after {
+    bottom: 0;
+    opacity: 1;
+  }
+  
+  .card-product:active {
+    transform: scale(0.98);
+  }
+  
+  .card:active::after {
+    content: "Added !";
+    height: 3.125em;
+  }
+  
+  .text {
+    max-width: 55px;
+  }
+  
+  .image {
+    background: rgb(253, 248, 248);
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1rem;
+    border: 0.5px solid #f0e7e7;
+  }
+
+  .table-product{
+    height: 500px;
+    overflow: scroll;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+  }
+
+</style>
+
+<div class="card">
+  <div class="card-body">
+    {% include "includes/search.html" %}
+
+    <div class="table-product" id="idApp"></div>
+  </div>
+</div>
+
+
+<script>
+    const appEl = document.querySelector('#idApp')
+    const searchEl = document.querySelector('#idInputSearch')
+    const baseUrl = `http://localhost:8000/api/v1/inventory/products/`
+
+    searchEl.addEventListener('input', e => filterProducts(e))
+
+    const filterProducts = (e)=>{
+      e.preventDefault()
+      let  url = baseUrl.concat("search?query=",e.target.value)
+      console.log(url);
+      getProducts(url);
+    }
+
+    const getProducts = async(url)=>{
+        const response = await fetch(url)
+        const resData = await response.json()
+
+        resData.items.forEach(el =>{
+            const div = document.createElement('div')
+            div.innerHTML = `
+                <div class="card-product">
+                <div class="image"><span class="text">This is a chair.</span></div>
+                <span class="title">${el.title}</span>
+                <span class="price">$ ${el.price}</span>
+                </div>
+            `
+            appEl.appendChild(div)
+        })
+    }
+
+    window.addEventListener("load", function (event) {
+      getProducts(baseUrl)
+      console.log("'Todos los recursos terminaron de cargar!");
+    });
+
+</script>

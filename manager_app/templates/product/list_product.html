@@ -1,5 +1,5 @@
 <style>
-.card-product {
+  .card-product {
     position: relative;
     width: 10.5em;
     height: 12em;
@@ -14,7 +14,7 @@
     padding: 0.5em;
     padding-bottom: 3.4em;
   }
-  
+
   .card-product::after {
     content: "Add to Cart";
     padding-top: 1.25em;
@@ -31,7 +31,7 @@
     text-transform: uppercase;
     opacity: 0;
   }
-  
+
   .card-product .title {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 0.9em;
@@ -41,7 +41,7 @@
     font-weight: 700;
     color: #000;
   }
-  
+
   .card-product .price {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 0.9em;
@@ -50,25 +50,25 @@
     bottom: 0.625em;
     color: #000;
   }
-  
+
   .card-product:hover::after {
     bottom: 0;
     opacity: 1;
   }
-  
+
   .card-product:active {
     transform: scale(0.98);
   }
-  
+
   .card:active::after {
     content: "Added !";
     height: 3.125em;
   }
-  
+
   .text {
     max-width: 55px;
   }
-  
+
   .image {
     background: rgb(253, 248, 248);
     width: 100%;
@@ -79,58 +79,64 @@
     border: 0.5px solid #f0e7e7;
   }
 
-  .table-product{
+  .table-product {
     height: 500px;
     overflow: scroll;
     display: grid;
     grid-template-columns: auto auto auto auto;
   }
-
 </style>
 
-<div class="card">
+<div class="card" style="width: 800px;">
   <div class="card-body">
-    {% include "includes/search.html" %}
+    <div class="d-flex">
+      {% include "includes/search.html" %}
+      <p class="text-secondary p-2" id="idCountItems">230 Items</p>
+    </div>
 
     <div class="table-product" id="idApp"></div>
   </div>
 </div>
 
-
 <script>
-    const appEl = document.querySelector('#idApp')
-    const searchEl = document.querySelector('#idInputSearch')
-    const baseUrl = `http://localhost:8000/api/v1/inventory/products/`
+  const countItems = document.querySelector('#idCountItems')
+  const appEl = document.querySelector('#idApp')
+  const formEl = document.querySelector('#formSearch')
+  const searchEl = document.querySelector('#idInputSearch')
+  const baseUrl = `http://localhost:8000/api/v1/inventory/products/`
 
-    searchEl.addEventListener('input', e => filterProducts(e))
+  formEl.addEventListener('submit', e =>filterProducts(e))
 
-    const filterProducts = (e)=>{
-      e.preventDefault()
-      let  url = baseUrl.concat("search?query=",e.target.value)
-      console.log(url);
-      getProducts(url);
-    }
+  const filterProducts = (e) => {
+    e.preventDefault()
+    appEl.innerHTML = ''
 
-    const getProducts = async(url)=>{
-        const response = await fetch(url)
-        const resData = await response.json()
+    let url = baseUrl.concat("search?query=", searchEl.value)
+    console.log(url);
+    getProducts(url);
+  }
 
-        resData.items.forEach(el =>{
-            const div = document.createElement('div')
-            div.innerHTML = `
+  const getProducts = async (url) => {
+    const response = await fetch(url)
+    const resData = await response.json()
+
+    countItems.textContent = `${resData.items.length} Items`
+
+    resData.items.forEach(el => {
+      const div = document.createElement('div')
+      div.innerHTML = `
                 <div class="card-product">
                 <div class="image"><span class="text">This is a chair.</span></div>
                 <span class="title">${el.title}</span>
                 <span class="price">$ ${el.price}</span>
                 </div>
             `
-            appEl.appendChild(div)
-        })
-    }
+      appEl.appendChild(div)
+    })
+  }
 
-    window.addEventListener("load", function (event) {
-      getProducts(baseUrl)
-      console.log("'Todos los recursos terminaron de cargar!");
-    });
+  if(searchEl.value.length == 0){
+    getProducts(baseUrl)
 
+  }
 </script>

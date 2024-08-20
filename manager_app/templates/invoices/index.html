@@ -92,7 +92,7 @@
             <td>${bill.number_bill}</td>
             <td>${bill.customer}</td>
             <td>$ ${bill.value}</td>
-            <td>Efectivo</td>
+            <td>${bill.method}</td>
             <td>${bill.date} | 4:37 PM</td>
             <td class="badge ${bill.is_paid ? 'text-bg-secondary' : 'text-bg-primary'}">${bill.is_paid ? 'Cancelado' : 'Pendiente'}</td>
         `

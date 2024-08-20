@@ -80,6 +80,7 @@
   }
 
   .table-product {
+    width: 100%;
     height: 500px;
     overflow: scroll;
     display: grid;
@@ -94,16 +95,30 @@
       <p class="text-secondary p-2" id="idCountItems">230 Items</p>
     </div>
 
-    <div class="table-product" id="idApp"></div>
+    <nav id="navbar-example2" class="navbar bg-body-tertiary px-3">
+      <a class="navbar-brand" href="#">Categoria</a>
+      <ul class="nav nav-pills" id="navCategory">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Dropdown</a>
+          <ul class="dropdown-menu"></ul>
+        </li>    
+      </ul>
+    </nav>
+
+    <div id="idApp" data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+    </div>
+
   </div>
 </div>
 
 <script>
   const countItems = document.querySelector('#idCountItems')
+  const category = document.querySelector('#navCategory')
   const appEl = document.querySelector('#idApp')
   const formEl = document.querySelector('#formSearch')
   const searchEl = document.querySelector('#idInputSearch')
   const baseUrl = `http://localhost:8000/api/v1/inventory/products/`
+
 
   formEl.addEventListener('submit', e =>filterProducts(e))
 
@@ -112,31 +127,82 @@
     appEl.innerHTML = ''
 
     let url = baseUrl.concat("search?query=", searchEl.value)
-    console.log(url);
     getProducts(url);
   }
 
+  const showCategory = (catg)=>{
+    const li = document.createElement('li')
+    const link = document.createElement('a')
+
+    li.classList.add("nav-item")
+    link.href = `#${catg}`
+    link.classList.add("nav-link")
+    link.textContent = `${catg}`
+
+    li.appendChild(link)
+
+    return li
+  }
+  
   const getProducts = async (url) => {
     const response = await fetch(url)
     const resData = await response.json()
-
+    let categories = new Set()
+    
+    //conteo de productos
     countItems.textContent = `${resData.items.length} Items`
-
-    resData.items.forEach(el => {
+    
+    //crea una lista de categorias
+    resData.items.forEach(el => categories.add(el.category))
+    
+    categories.forEach(catg =>{
+      const ul = document.querySelector(".dropdown-menu")
       const div = document.createElement('div')
-      div.innerHTML = `
-                <div class="card-product">
-                <div class="image"><span class="text">This is a chair.</span></div>
-                <span class="title">${el.title}</span>
-                <span class="price">$ ${el.price}</span>
-                </div>
-            `
+      const h4 = document.createElement('h4')
+      
+      let liCategory = showCategory(catg)
+      h4.id = `${catg}`
+      h4.textContent = `${catg}`
+      h4.classList.add('p-2')
+
+      if(category.children.length < 5){
+        category.appendChild(liCategory)
+      }else{
+        liCategory.classList.remove('nav-item')
+        liCategory.children[0].classList.remove("nav-link")
+        liCategory.children[0].classList.add("dropdown-item")
+        ul.appendChild(liCategory)
+        category.appendChild(ul)
+      }
+
+      let items = resData.items.filter(el => el.category==catg)
+      div.classList.add('table-product')
+
+      items.forEach(item => {
+        let element = createProductCard(item)
+        div.appendChild(element)
+      })
+
+      appEl.appendChild(h4)
       appEl.appendChild(div)
     })
+
+  }
+  
+  const createProductCard = (item)=>{
+    const div = document.createElement('div')
+    div.innerHTML = `
+            <div class="card-product">
+            <div class="image"><span class="text">This is a chair.</span></div>
+            <span class="title">${item.title}</span>
+            <span class="price">$ ${item.price}</span>
+            </div>
+          `
+    return div
   }
 
   if(searchEl.value.length == 0){
     getProducts(baseUrl)
-
   }
+
 </script>

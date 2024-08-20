@@ -82,10 +82,10 @@ class Product(models.Model):
     title = models.CharField(max_length=70, unique=True)
     codebar = models.CharField(max_length=15, unique=True)
     photo = models.ImageField(upload_to="product/", null=True, blank=True)
-    unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True,blank=True)
     price = models.FloatField(null=True,blank=True, default=0)
-    list_price = models.ForeignKey(ListPrice, on_delete=models.CASCADE)
+    list_price = models.ForeignKey(ListPrice, on_delete=models.CASCADE, default=1)
     updated_at = models.DateField(auto_now_add=True)
 
     class Meta:

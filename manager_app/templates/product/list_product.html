@@ -1,0 +1,208 @@
+<style>
+  .card-product {
+    position: relative;
+    width: 10.5em;
+    height: 12em;
+    border: 0;
+    /*box-shadow: 0px 1px 13px rgba(0,0,0,0.1);*/
+    cursor: pointer;
+    transition: all 120ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    padding: 0.5em;
+    padding-bottom: 3.4em;
+  }
+
+  .card-product::after {
+    content: "Add to Cart";
+    padding-top: 1.25em;
+    padding-left: 1.25em;
+    position: absolute;
+    left: 0;
+    bottom: -60px;
+    background: #00AC7C;
+    color: #fff;
+    height: 2.5em;
+    width: 90%;
+    transition: all 80ms;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0;
+  }
+
+  .card-product .title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+    position: absolute;
+    left: 0.625em;
+    bottom: 1.875em;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .card-product .price {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 0.9em;
+    position: absolute;
+    left: 0.625em;
+    bottom: 0.625em;
+    color: #000;
+  }
+
+  .card-product:hover::after {
+    bottom: 0;
+    opacity: 1;
+  }
+
+  .card-product:active {
+    transform: scale(0.98);
+  }
+
+  .card:active::after {
+    content: "Added !";
+    height: 3.125em;
+  }
+
+  .text {
+    max-width: 55px;
+  }
+
+  .image {
+    background: rgb(253, 248, 248);
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1rem;
+    border: 0.5px solid #f0e7e7;
+  }
+
+  .table-product {
+    width: 100%;
+    height: 500px;
+    overflow: scroll;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+  }
+</style>
+
+<div class="card" style="width: 800px;">
+  <div class="card-body">
+    <div class="d-flex">
+      {% include "includes/search.html" %}
+      <p class="text-secondary p-2" id="idCountItems">230 Items</p>
+    </div>
+
+    <nav id="navbar-example2" class="navbar bg-body-tertiary px-3">
+      <a class="navbar-brand" href="#">Categoria</a>
+      <ul class="nav nav-pills" id="navCategory">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Dropdown</a>
+          <ul class="dropdown-menu"></ul>
+        </li>    
+      </ul>
+    </nav>
+
+    <div id="idApp" data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const countItems = document.querySelector('#idCountItems')
+  const category = document.querySelector('#navCategory')
+  const appEl = document.querySelector('#idApp')
+  const formEl = document.querySelector('#formSearch')
+  const searchEl = document.querySelector('#idInputSearch')
+  const baseUrl = `http://localhost:8000/api/v1/inventory/products/`
+
+
+  formEl.addEventListener('submit', e =>filterProducts(e))
+
+  const filterProducts = (e) => {
+    e.preventDefault()
+    appEl.innerHTML = ''
+
+    let url = baseUrl.concat("search?query=", searchEl.value)
+    getProducts(url);
+  }
+
+  const showCategory = (catg)=>{
+    const li = document.createElement('li')
+    const link = document.createElement('a')
+
+    li.classList.add("nav-item")
+    link.href = `#${catg}`
+    link.classList.add("nav-link")
+    link.textContent = `${catg}`
+
+    li.appendChild(link)
+
+    return li
+  }
+  
+  const getProducts = async (url) => {
+    const response = await fetch(url)
+    const resData = await response.json()
+    let categories = new Set()
+    
+    //conteo de productos
+    countItems.textContent = `${resData.items.length} Items`
+    
+    //crea una lista de categorias
+    resData.items.forEach(el => categories.add(el.category))
+    
+    categories.forEach(catg =>{
+      const ul = document.querySelector(".dropdown-menu")
+      const div = document.createElement('div')
+      const h4 = document.createElement('h4')
+      
+      let liCategory = showCategory(catg)
+      h4.id = `${catg}`
+      h4.textContent = `${catg}`
+      h4.classList.add('p-2')
+
+      if(category.children.length < 5){
+        category.appendChild(liCategory)
+      }else{
+        liCategory.classList.remove('nav-item')
+        liCategory.children[0].classList.remove("nav-link")
+        liCategory.children[0].classList.add("dropdown-item")
+        ul.appendChild(liCategory)
+        category.appendChild(ul)
+      }
+
+      let items = resData.items.filter(el => el.category==catg)
+      div.classList.add('table-product')
+
+      items.forEach(item => {
+        let element = createProductCard(item)
+        div.appendChild(element)
+      })
+
+      appEl.appendChild(h4)
+      appEl.appendChild(div)
+    })
+
+  }
+  
+  const createProductCard = (item)=>{
+    const div = document.createElement('div')
+    div.innerHTML = `
+            <div class="card-product">
+            <div class="image"><span class="text">This is a chair.</span></div>
+            <span class="title">${item.title}</span>
+            <span class="price">$ ${item.price}</span>
+            </div>
+          `
+    return div
+  }
+
+  if(searchEl.value.length == 0){
+    getProducts(baseUrl)
+  }
+
+</script>

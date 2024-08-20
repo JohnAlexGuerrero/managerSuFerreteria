@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Sum
 
-from sales.models import Bill
+from sales.models import Bill, Order
 from main.models import Purchase
+from cash_register.models import Transaction
 
 from sales.forms import BillForm, OrderForm
 from django.http import JsonResponse
@@ -27,9 +28,10 @@ def list_bills(request):
                 "id": bill.id,
                 "number_bill": bill.number_bill,
                 "customer": bill.customer.customer_name,
-                "value": bill.total_amount,
+                "value": f'{bill.total_amount:,.0f}',
                 "date": bill.sale_date,
-                "is_paid": bill.is_paid
+                "is_paid": bill.is_paid,
+                "method": Transaction.objects.get(bill=bill).payment_method.capitalize()
             }
             for bill in page_obj
         ],
@@ -37,24 +39,20 @@ def list_bills(request):
     })
 
 def total_balance(request):
-    total_sales = Bill.objects.all().aggregate(Sum('total_amount'))['total_amount__sum']
-    total_purchase = Purchase.objects.all().aggregate(Sum('total_amount'))['total_amount__sum']
-    total_balance = total_sales - total_purchase
+    total_sales = Transaction.objects.all().aggregate(Sum('total'))['total__sum']
+    item_order = Order.objects.filter(bill__is_paid=True)
+    total_cost_sales = [(x.quantity * x.product.price) for x in item_order]
+    print(total_cost_sales)
+    total_balance = total_sales - sum(total_cost_sales)
     return JsonResponse({
-        "balance": total_balance,
-        "ventas": total_sales,
-        "compras": total_purchase
+        "balance": f'{total_balance:,.0f}',
+        "pct_balance": f'{((total_balance / total_sales) * 100):,.1f}',
+        "ventas": f'{total_sales:,.0f}',
+        "costos": f'{sum(total_cost_sales):,.0f}'
     })
 
 def create_bill(request):
-    if request.method == 'POST':
-        form = BillForm(request.POST)
-        order_formset = OrderForm(request.POST)
-    else:
-        form = BillForm()
-        order_formset = OrderForm()
-        
     return render(request, 'invoices/create_bill.html', {
-        'form': form,
-        'order_formset': order_formset
+        # 'form': form,
+        # 'order_formset': order_formset
     })

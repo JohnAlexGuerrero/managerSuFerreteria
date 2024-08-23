@@ -81,7 +81,7 @@
 
   .table-product {
     width: 100%;
-    height: 500px;
+    height: auto;
     overflow: scroll;
     display: grid;
     grid-template-columns: auto auto auto auto;
@@ -96,10 +96,9 @@
     </div>
 
     <nav id="navbar-example2" class="navbar bg-body-tertiary px-3">
-      <a class="navbar-brand" href="#">Categoria</a>
       <ul class="nav nav-pills" id="navCategory">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Dropdown</a>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Categorias</a>
           <ul class="dropdown-menu"></ul>
         </li>    
       </ul>
@@ -159,13 +158,23 @@
       const ul = document.querySelector(".dropdown-menu")
       const div = document.createElement('div')
       const h4 = document.createElement('h4')
-      
-      let liCategory = showCategory(catg)
+      const up = document.createElement('a')
+      const header = document.createElement('div')
+
+      header.classList.add('d-flex')
+      up.href = '#'
+      up.textContent = 'Arriba'
       h4.id = `${catg}`
       h4.textContent = `${catg}`
       h4.classList.add('p-2')
 
-      if(category.children.length < 5){
+      header.appendChild(h4)
+      header.appendChild(up)
+      
+      let liCategory = showCategory(catg)
+
+      //muestra en navbar de categorias
+      if(category.children.length < 6){
         category.appendChild(liCategory)
       }else{
         liCategory.classList.remove('nav-item')
@@ -183,7 +192,7 @@
         div.appendChild(element)
       })
 
-      appEl.appendChild(h4)
+      appEl.appendChild(header)
       appEl.appendChild(div)
     })
 

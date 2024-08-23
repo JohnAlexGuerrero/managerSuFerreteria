@@ -51,6 +51,38 @@ def total_balance(request):
         "costos": f'{sum(total_cost_sales):,.0f}'
     })
 
+def detail_invoice(request, *args, **kwargs):
+    print()
+    bill = Bill.objects.get(number_bill=kwargs['number_bill'])
+    if bill:
+        products = Order.objects.filter(bill=bill)
+        
+    return JsonResponse({
+        "number_bill": bill.number_bill,
+        "date": bill.sale_date,
+        "customer":{
+            "num_id": bill.customer.id_document,
+            "name":bill.customer.customer_name,
+            "address": bill.customer.customer_address,
+            "phone": bill.customer.customer_mobile,
+            "email": bill.customer.email,
+        },
+        "products":[
+                {
+                    "code": item.product.codebar,
+                    "description": item.product.title,
+                    "qty": item.quantity,
+                    "price": item.price,
+                    "total": item.total_amount,
+                    "tax": 19
+                }
+                for item in products
+            ],
+        "subtotal": bill.subTotal(),
+        "tax": (bill.total_amount - bill.subTotal()),
+        "total": bill.total_amount,
+    })
+
 def create_bill(request):
     return render(request, 'invoices/create_bill.html', {
         # 'form': form,

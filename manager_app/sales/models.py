@@ -39,6 +39,11 @@ class Bill(models.Model):
 
     def get_absolute_url(self):
         return reverse("Bill_detail", kwargs={"pk": self.pk})
+    
+    def subTotal(self):
+        orders = Order.objects.filter(bill__id=self.id)
+        subtotal = [x.total_amount for x in orders]
+        return round(sum(subtotal) / 1.19)
 
 class Order(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)

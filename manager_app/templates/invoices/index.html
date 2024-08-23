@@ -42,24 +42,26 @@
           
         </tr>
     </table>
-
+    
     <nav aria-label="...">
         <ul class="pagination pagination-md" id="id-paginator">
-          <!-- <li class="page-item active" aria-current="page">
-            <span class="page-link">1</span>
-          </li> -->
-        </ul>
-    </nav>
-</div>
-
-<script>
-    const tableEl = document.querySelector('#table-invoices')
-    const paginatorEl = document.querySelector('#id-paginator')
+            <!-- <li class="page-item active" aria-current="page">
+                <span class="page-link">1</span>
+                </li> -->
+            </ul>
+        </nav>
+    </div>
     
-    const getListInvoices = async()=>{
-        let url = getLocationBrowser()
-        const resp = await fetch(url)
-        const respData = await resp.json()
+    {% include "includes/modal.html" with template="invoices/bill.html" %}
+    
+    <script>
+        const tableEl = document.querySelector('#table-invoices')
+        const paginatorEl = document.querySelector('#id-paginator')
+        
+        const getListInvoices = async()=>{
+            let url = getLocationBrowser()
+            const resp = await fetch(url)
+            const respData = await resp.json()
         respData.data.forEach(el =>{
             setTableInvoices(el)
         })
@@ -89,7 +91,11 @@
         const tr = document.createElement('tr')
         
         tr.innerHTML = `
-            <td>${bill.number_bill}</td>
+            <td>
+                <a href="#${bill.number_bill}" onclick="openModal()">
+                    ${bill.number_bill}
+                </a>
+            </td>
             <td>${bill.customer}</td>
             <td>$ ${bill.value}</td>
             <td>${bill.method}</td>

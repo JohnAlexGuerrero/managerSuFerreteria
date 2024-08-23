@@ -1,5 +1,5 @@
 from django.urls import path
-from sales.views import create_bill, home, list_bills, total_balance
+from sales.views import create_bill, home, list_bills, total_balance, detail_invoice
 from main.views import list_products, filter_products
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
 
     # api route
     path('sales/list-invoices/', list_bills, name='list-invoices'),
+    path('sales/invoice/<str:number_bill>/', detail_invoice, name='detail-invoice'),
     
     path('sales/list-invoices/balance/', total_balance, name='list-invoices-balance'),
     

@@ -140,15 +140,25 @@
     function monitorearCambiosURL() {
         // Función que se ejecuta cada vez que cambia la URL
         window.onpopstate = function(event) {
-          url = document.location.href.replace('sales/','api/v1/sales/invoice/')
-          sizeUrl = url.length
-          apiUrl = url.replace('#','')
-          apiUrl += '/'
-          console.log(apiUrl)
+            url = document.location.href
+            if(url.includes('sales/')){
+                url = url.replace('sales/', 'api/v1/sales/invoice/')
+            }
 
-          getInvoice(apiUrl)
+            if(url.includes('?page=')){
+                sizeUrl = url.length
+                numberBill = url.substring(51,sizeUrl)
+                url = url.substring(0,43)
+                url += numberBill
+            }
+
+            if(url.includes('#')){
+                url = url.replace('#', '')
+            }
+                
+            apiUrl = url + '/'
+            getInvoice(apiUrl)
         };
-        
     }
     
     const getInvoice = async(url) =>{

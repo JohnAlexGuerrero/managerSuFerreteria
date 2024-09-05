@@ -1,0 +1,31 @@
+<select class="form-select" aria-label="Default select example" id="filterCalendar">
+    <option value="1" selected>Diario</option>
+    <option value="2">Semanal</option>
+    <option value="3">Mensual</option>
+    <option value="3">Rango personalizado</option>
+</select>
+
+<div id="calendar" class="form-control"></div>
+
+<script>
+    const calendar = document.querySelector('#calendar')
+    const filterCalendar = document.querySelector('#filterCalendar')
+
+    filterCalendar.addEventListener('change', e=> {
+        setCalendar(e.target.value)
+    })
+
+    const setCalendar = value =>{
+        let months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Agos','Sep','Oct','Nov','Dic']
+        let date = new Date()
+        if(value == 1){
+            calendar.textContent = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+        }else if(value == 2){
+            let dayDiff = 6 - date.getDay()
+            calendar.textContent = `${date.getDate() - dayDiff} ${months[date.getMonth()]} | ${date.getDay() + dayDiff} ${months[date.getMonth()]}`
+        }else if(value == 3){
+            calendar.textContent = `${months[date.getMonth()]} ${date.getFullYear()}`
+        }
+    }
+
+</script>

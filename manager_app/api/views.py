@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.db.models import Sum
 
+from datetime import datetime
+
 import io
 import openpyxl
 from openpyxl.writer.excel import save_workbook #.writer.excel import save_virtual_workbook
@@ -50,7 +52,6 @@ def total_balance(request):
     })
 
 def detail_invoice(request, *args, **kwargs):
-    print()
     bill = Bill.objects.get(number_bill=kwargs['number_bill'])
     if bill:
         products = Order.objects.filter(bill=bill)
@@ -112,6 +113,26 @@ def export_csv(request):
     df = pd.DataFrame(data=data, columns=columns, index=False)
     file = df.to_csv("ventas.csv")
     return render(request, 'home', file)
+
+#filter data by date
+def filter_by_date(request):
+    start_date, end_date = request.GET.get('query'), request.GET.get('q')
+    bills = Bill.objects.filter(sale_date__range=(start_date, end_date))
+
+    return JsonResponse({
+        "data": [
+            {
+                "id": bill.id,
+                "number_bill": bill.number_bill,
+                "customer": bill.customer.customer_name,
+                "value": f'{bill.total_amount:,.0f}',
+                "date": bill.sale_date,
+                "is_paid": bill.is_paid,
+                "method": Transaction.objects.get(bill=bill).payment_method.capitalize()
+            }
+            for bill in bills
+        ]
+    })
 
 def export_excel(request):
     template_name = 'invoices/index.html'

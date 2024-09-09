@@ -21,104 +21,10 @@
 
     {% include "includes/card_dash.html" %}
     
-    <table class="table table-striped" id="table-invoices">
-        <tr>
-            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
-                <div class="text">
-                    <a href="?o=">Factura</a>
-                </div>
-            </th>
-            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
-                <div class="text">
-                    <a href="?o=">Cliente</a>
-                </div>
-            </th>
-            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
-                <div class="text">
-                    <a href="?o=">Valor</a>
-                </div>
-            </th>
-            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
-                <div class="text">
-                    <a href="?o=">Medio de pago</a>
-                </div>
-            </th>
-            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
-                <div class="text">
-                    <a href="?o=">Fecha y hora</a>
-                </div>
-            </th>
-            <th class="sorting" tabindex="0" colspan="1" rowspan="1">
-                <div class="text">
-                    <a href="?o=">Estado</a>
-                </div>
-            </th>
-          
-        </tr>
-    </table>
-    
-    <nav aria-label="...">
-        <ul class="pagination pagination-md" id="id-paginator">
-            <!-- <li class="page-item active" aria-current="page">
-                <span class="page-link">1</span>
-                </li> -->
-            </ul>
-        </nav>
-    </div>
+    {% include "invoices/list_bills.html" %}
+</div>
     
     {% include "includes/modal.html" with template="invoices/bill.html" %}
     
-    <script>
-        const tableEl = document.querySelector('#table-invoices')
-        const paginatorEl = document.querySelector('#id-paginator')
-        
-        const getListInvoices = async()=>{
-            let url = getLocationBrowser()
-            const resp = await fetch(url)
-            const respData = await resp.json()
-        respData.data.forEach(el =>{
-            setTableInvoices(el)
-        })
-
-        paginationInvoices(respData.pages)
-        getLocationBrowser()
-    }
-
-    const getLocationBrowser = ()=>{
-        let currentUrl = window.location.href
-        let url = currentUrl.replace("sales","api/v1/sales/list-invoices")
-        return url
-    }
     
-    const paginationInvoices = (num)=>{
-        for(let i=0; i < num; i++){
-            const li = document.createElement('li')
-            
-            li.innerHTML = `
-                <li class="page-item"><a class="page-link" href="?page=${i + 1}">${i + 1}</a></li>
-            `
-            paginatorEl.appendChild(li)
-        }
-    }
-
-    const setTableInvoices = (bill)=>{
-        const tr = document.createElement('tr')
-        
-        tr.innerHTML = `
-            <td>
-                <a href="#${bill.number_bill}" onclick="openModal()">
-                    ${bill.number_bill}
-                </a>
-            </td>
-            <td>${bill.customer}</td>
-            <td>$ ${bill.value}</td>
-            <td>${bill.method}</td>
-            <td>${bill.date} | 4:37 PM</td>
-            <td class="badge ${bill.is_paid ? 'text-bg-secondary' : 'text-bg-primary'}">${bill.is_paid ? 'Cancelado' : 'Pendiente'}</td>
-        `
-        tableEl.appendChild(tr)
-    }
-
-    getListInvoices()
-</script>
 {% endblock %}

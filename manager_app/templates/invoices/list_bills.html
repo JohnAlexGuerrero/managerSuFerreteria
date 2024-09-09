@@ -1,0 +1,102 @@
+<table class="table table-striped" id="table-invoices">
+    <tr>
+        <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+            <div class="text">
+                <a href="?o=">Factura</a>
+            </div>
+        </th>
+        <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+            <div class="text">
+                <a href="?o=">Cliente</a>
+            </div>
+        </th>
+        <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+            <div class="text">
+                <a href="?o=">Valor</a>
+            </div>
+        </th>
+        <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+            <div class="text">
+                <a href="?o=">Medio de pago</a>
+            </div>
+        </th>
+        <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+            <div class="text">
+                <a href="?o=">Fecha y hora</a>
+            </div>
+        </th>
+        <th class="sorting" tabindex="0" colspan="1" rowspan="1">
+            <div class="text">
+                <a href="?o=">Estado</a>
+            </div>
+        </th>
+      
+    </tr>
+</table>
+
+<nav aria-label="...">
+    <ul class="pagination pagination-md" id="id-paginator">
+        <!-- <li class="page-item active" aria-current="page">
+            <span class="page-link">1</span>
+            </li> -->
+    </ul>
+</nav>
+
+<script>
+    const baseUrlBill = `http://localhost:8000/api/v1/sales/list-invoices/`
+    const tableEl = document.querySelector('#table-invoices')
+    const paginatorEl = document.querySelector('#id-paginator')
+    
+    //function: obtener una lista de facturas
+    const getListInvoices = async(url)=>{
+        const resp = await fetch(url)
+        const respData = await resp.json()
+
+        respData.data.forEach(el =>{
+            setTableInvoices(el)
+        })
+
+        paginationInvoices(respData.pages)
+    }
+
+    const paginationInvoices = (num)=>{
+        for(let i=0; i < num; i++){
+            const li = document.createElement('li')
+            
+            li.innerHTML = `
+                <li class="page-item"><a class="page-link" href="?page=${i + 1}">${i + 1}</a></li>
+            `
+            paginatorEl.appendChild(li)
+        }
+    }
+
+const setTableInvoices = (bill)=>{
+    const tr = document.createElement('tr')
+    
+    tr.innerHTML = `
+        <td>
+            <a href="#${bill.number_bill}" onclick="openModal()">
+                ${bill.number_bill}
+            </a>
+        </td>
+        <td>${bill.customer}</td>
+        <td>$ ${bill.value}</td>
+        <td>${bill.method}</td>
+        <td>${bill.date} | 4:37 PM</td>
+        <td class="badge ${bill.is_paid ? 'text-bg-secondary' : 'text-bg-primary'}">${bill.is_paid ? 'Cancelado' : 'Pendiente'}</td>
+    `
+    tableEl.appendChild(tr)
+}
+
+filterCalendar.addEventListener('change', e=> {
+    let filterUrl = setCalendar(e.target.value)
+    let url = baseUrlBill.concat("filter/date?query=", filterUrl)
+    getListInvoices(url)
+})
+
+{% comment %} window.addEventListener("load", function (event) {
+    getListInvoices(baseUrlBill)   
+    console.log("'Todos los recursos terminaron de cargar!");
+}); {% endcomment %}
+
+</script>

@@ -1,8 +1,9 @@
 <select class="form-select" aria-label="Default select example" id="filterCalendar">
-    <option value="1" selected>Diario</option>
+    <option value="0" selected>Filtrar</option>
+    <option value="1">Diario</option>
     <option value="2">Semanal</option>
     <option value="3">Mensual</option>
-    <option value="3">Rango personalizado</option>
+    <option value="4">Rango personalizado</option>
 </select>
 
 <form method="post">
@@ -85,17 +86,20 @@
         
         if(value == 1){
             calendar.textContent = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
-            res = `${date.getFullYear()}-${date.getMonth() + 1}-${01}&q=${date.getFullYear()}-${date.getMonth() + 1}-${01}`
+            resultDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+            localStorage.setItem("query", resultDate)
         }else if(value == 2){
             let d = getDaysOfWeek(date)
             calendar.textContent = `${d[0]} ${months[date.getMonth()]} | ${d[6]} ${months[date.getMonth()]}`
-            res = `${date.getFullYear()}-${date.getMonth() + 1}-${d[0]}&q=${date.getFullYear()}-${date.getMonth() + 1}-${d[6]}`
+            resultDate = `${date.getFullYear()}-${date.getMonth() + 1}-${d[0]}&q=${date.getFullYear()}-${date.getMonth() + 1}-${d[6]}`
+            localStorage.setItem("query",resultDate)
         }else if(value == 3){
             calendar.textContent = `${months[date.getMonth()]} ${date.getFullYear()}`
-            res = `${date.getFullYear()}-${date.getMonth() + 1}-${01}&q=${date.getFullYear()}-${date.getMonth() + 1}-${getDaysInMonth(date.getFullYear(), date.getMonth() + 1)}`
+            resultDate = `${date.getFullYear()}-${date.getMonth() + 1}-${1}&q=${date.getFullYear()}-${date.getMonth() + 1}-${getDaysInMonth(date.getFullYear(), date.getMonth() + 1)}`
+            localStorage.setItem("query", resultDate)
         }
 
-        return res
+        return resultDate
     }
 
 

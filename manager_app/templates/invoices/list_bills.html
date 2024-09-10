@@ -1,5 +1,5 @@
-<table class="table table-striped" id="table-invoices">
-    <tr>
+<table class="table table-striped" >
+    <thead>
         <th class="sorting" tabindex="0" colspan="1" rowspan="1">
             <div class="text">
                 <a href="?o=">Factura</a>
@@ -30,8 +30,8 @@
                 <a href="?o=">Estado</a>
             </div>
         </th>
-      
-    </tr>
+    </thead>
+    <tbody id="table-invoices"></tbody>
 </table>
 
 <nav aria-label="...">
@@ -51,6 +51,8 @@
     const getListInvoices = async(url)=>{
         const resp = await fetch(url)
         const respData = await resp.json()
+
+        tableEl.innerHTML = ''
 
         respData.data.forEach(el =>{
             setTableInvoices(el)
@@ -94,9 +96,5 @@ filterCalendar.addEventListener('change', e=> {
     getListInvoices(url)
 })
 
-{% comment %} window.addEventListener("load", function (event) {
-    getListInvoices(baseUrlBill)   
-    console.log("'Todos los recursos terminaron de cargar!");
-}); {% endcomment %}
 
 </script>

@@ -77,7 +77,8 @@
   const rowEl = document.querySelector('#idRow')
 
   var getData = async function () {
-    const response = await fetch(`http://localhost:8000/api/v1/sales/list-invoices/balance/`)
+    var query = localStorage.getItem('query')
+    const response = await fetch(`http://localhost:8000/api/v1/sales/list-invoices/balance?query=${query}`)
     const resData = await response.json()
 
     for(let strName of ['balance','ventas','costos']){

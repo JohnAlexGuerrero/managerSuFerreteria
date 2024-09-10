@@ -39,16 +39,26 @@ def list_bills(request):
     })
 
 def total_balance(request):
-    total_sales = Transaction.objects.all().aggregate(Sum('total'))['total__sum']
-    item_order = Order.objects.filter(bill__is_paid=True)
-    total_cost_sales = [(x.quantity * x.product.price) for x in item_order]
-    print(total_cost_sales)
-    total_balance = total_sales - sum(total_cost_sales)
+    start_date, end_date = request.GET.get('query'), request.GET.get('q')
+    if end_date == None:
+        sales = Transaction.objects.filter(transaction_date=start_date)
+    else:
+        sales = Transaction.objects.filter(transaction_date__range=(start_date, end_date))
+    
+    total_sales = sales.aggregate(Sum('total'))['total__sum']
+    print(sales)
+    total_cost_sales =0
+     
+    for sale in sales:
+        cost_products_in_order = [(x.quantity * x.product.price) for x in sale.bill.getItemsInOrder()] 
+        total_cost_sales += sum(cost_products_in_order)
+    
+    total_balance = total_sales - total_cost_sales
     return JsonResponse({
         "balance": f'{total_balance:,.0f}',
         "pct_balance": f'{((total_balance / total_sales) * 100):,.1f}',
         "ventas": f'{total_sales:,.0f}',
-        "costos": f'{sum(total_cost_sales):,.0f}'
+        "costos": f'{total_cost_sales:,.0f}'
     })
 
 def detail_invoice(request, *args, **kwargs):
@@ -117,7 +127,10 @@ def export_csv(request):
 #filter data by date
 def filter_by_date(request):
     start_date, end_date = request.GET.get('query'), request.GET.get('q')
-    bills = Bill.objects.filter(sale_date__range=(start_date, end_date))
+    if end_date == None:
+        bills = Bill.objects.filter(sale_date=start_date)
+    else:
+        bills = Bill.objects.filter(sale_date__range=(start_date, end_date))
 
     return JsonResponse({
         "data": [

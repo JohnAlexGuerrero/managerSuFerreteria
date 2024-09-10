@@ -8,7 +8,7 @@ urlpatterns = [
     path('sales/list-invoices/', list_bills, name='list-invoices'),
     path('sales/invoice/<str:number_bill>/', detail_invoice, name='detail-invoice'),
     path('sales/list-invoices/filter/date', filter_by_date, name='filter_date'),
-    path('sales/list-invoices/balance/', total_balance, name='list-invoices-balance'),
+    path('sales/list-invoices/balance', total_balance, name='list-invoices-balance'),
     
     path('inventory/products/',list_products,name='products'),
     path('inventory/products/search',filter_products,name='filter_products'),

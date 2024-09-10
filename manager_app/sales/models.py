@@ -44,6 +44,9 @@ class Bill(models.Model):
         orders = Order.objects.filter(bill__id=self.id)
         subtotal = [x.total_amount for x in orders]
         return round(sum(subtotal) / 1.19)
+    
+    def getItemsInOrder(self):
+        return Order.objects.filter(bill_id=self.id)
 
 class Order(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)

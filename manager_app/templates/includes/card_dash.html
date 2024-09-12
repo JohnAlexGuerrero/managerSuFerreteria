@@ -69,9 +69,7 @@
   }
 </style>
 
-<div class="row" id="idRow">
-</div>
-
+<div class="row" id="idRow"></div>
 
 <script>
   const rowEl = document.querySelector('#idRow')
@@ -80,6 +78,7 @@
     var query = localStorage.getItem('query')
     const response = await fetch(`http://localhost:8000/api/v1/sales/list-invoices/balance?query=${query}`)
     const resData = await response.json()
+    rowEl.innerHTML = ''
 
     for(let strName of ['balance','ventas','costos']){
       const div = document.createElement('div')
@@ -119,5 +118,4 @@
 
   }
 
-  getData()
 </script>

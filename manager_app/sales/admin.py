@@ -16,7 +16,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['bill','product','quantity','unit','price','total_amount', 'pct_ganancia']
     list_per_page = 10
     list_filter = ['bill__sale_date',]
-    search_fields = ['product__title',]
+    search_fields = ['product__title','bill__number_bill']
 
     def unit(self, obj):
         return obj.product.unit

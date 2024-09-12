@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from django.db.models import Q
 
 from datetime import datetime
 
@@ -8,7 +9,7 @@ import io
 import openpyxl
 from openpyxl.writer.excel import save_workbook #.writer.excel import save_virtual_workbook
 
-from sales.models import Bill, Order
+from sales.models import Bill, Order, Customer
 from main.models import Purchase
 from cash_register.models import Transaction
 
@@ -16,6 +17,27 @@ from sales.forms import BillForm, OrderForm
 from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
+
+#api clients
+def search_client_by_name(request):
+    customers = Customer.objects.filter(
+        Q(customer_name__icontains=request.GET.get('query'))
+    )
+    
+    return JsonResponse({
+        "clients":[
+            {
+                "id": client.id_document,
+                "name": client.customer_name,
+                "address": client.customer_address,
+                "contact": client.customer_mobile,
+                "email": client.email
+            }
+            for client in customers
+        ]
+    })
+    
+#api sales
 def list_bills(request):
     bills = Bill.objects.all().order_by('-sale_date')
     paginator = Paginator(bills, 8)
@@ -40,15 +62,15 @@ def list_bills(request):
 
 def total_balance(request):
     start_date, end_date = request.GET.get('query'), request.GET.get('q')
+    sales = Transaction.objects.all()
     if end_date == None:
-        sales = Transaction.objects.filter(transaction_date=start_date)
-    else:
-        sales = Transaction.objects.filter(transaction_date__range=(start_date, end_date))
+        end_date = start_date
+
+    sales = sales.filter(transaction_date__range=(start_date, end_date))
     
-    total_sales = sales.aggregate(Sum('total'))['total__sum']
-    print(sales)
-    total_cost_sales =0
-     
+    total_sales = sales.aggregate(Sum('total'))['total__sum'] if len(sales) != 0 else 0
+    
+    total_cost_sales = 0 
     for sale in sales:
         cost_products_in_order = [(x.quantity * x.product.price) for x in sale.bill.getItemsInOrder()] 
         total_cost_sales += sum(cost_products_in_order)
@@ -56,7 +78,7 @@ def total_balance(request):
     total_balance = total_sales - total_cost_sales
     return JsonResponse({
         "balance": f'{total_balance:,.0f}',
-        "pct_balance": f'{((total_balance / total_sales) * 100):,.1f}',
+        "pct_balance": f'{((total_balance / total_sales) * 100):,.1f}' if total_balance != 0 else 0,
         "ventas": f'{total_sales:,.0f}',
         "costos": f'{total_cost_sales:,.0f}'
     })

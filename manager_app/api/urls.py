@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import list_bills, total_balance, detail_invoice, export_excel, filter_by_date
+from api.views import list_bills, total_balance, detail_invoice, export_excel, filter_by_date, search_client_by_name
 from main.views import list_products, filter_products
 
 urlpatterns = [
@@ -12,7 +12,9 @@ urlpatterns = [
     
     path('inventory/products/',list_products,name='products'),
     path('inventory/products/search',filter_products,name='filter_products'),
-        
+    
+    path('clients/search', search_client_by_name, name="search_client"),
+    
     path('export_csv/', export_excel, name='export_csv'),
     
 ]

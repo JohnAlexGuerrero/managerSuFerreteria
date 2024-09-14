@@ -1,31 +1,109 @@
 <select class="form-select" aria-label="Default select example" id="filterCalendar">
-    <option value="1" selected>Diario</option>
+    <option value="0" selected>Filtrar</option>
+    <option value="1">Diario</option>
     <option value="2">Semanal</option>
     <option value="3">Mensual</option>
-    <option value="3">Rango personalizado</option>
+    <option value="4">Rango personalizado</option>
 </select>
 
-<div id="calendar" class="form-control"></div>
+<form method="post">
+    {% csrf_token %}
+    <div id="calendar" class="form-control"></div>
+    <input type="submit" value="Filtrar">
+</form>
 
 <script>
     const calendar = document.querySelector('#calendar')
     const filterCalendar = document.querySelector('#filterCalendar')
 
-    filterCalendar.addEventListener('change', e=> {
-        setCalendar(e.target.value)
-    })
-
     const setCalendar = value =>{
+        var res = ''
         let months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Agos','Sep','Oct','Nov','Dic']
         let date = new Date()
+
+        function getDaysInMonth(year, month){
+            var lastDayOfMonth = new Date(year, month, 0).getDate()
+            return lastDayOfMonth
+        }
+
+        function getDaysOfWeek(today){
+            //['D','L','Ma','Mi','J','V','S']
+            let daysInWeek = []
+            let limitDay = 0
+
+            switch(today.getDay()){
+                case 0:
+                    daysInWeek.push(today.getDate()) //Sunday
+                    break;
+                case 1:
+                    daysInWeek.push(today.getDate() - 1) //sunday
+                    daysInWeek.push(today.getDate()) //monday
+                    break;
+                case 2:
+                    daysInWeek.push(today.getDate() - 2) //sunday
+                    daysInWeek.push(today.getDate() - 1) //monday
+                    daysInWeek.push(today.getDate())    //tuesday
+                    break;
+                case 3:
+                    daysInWeek.push(today.getDate() - 3) //sunday
+                    daysInWeek.push(today.getDate() - 2) //monday
+                    daysInWeek.push(today.getDate() - 1) //tuesday
+                    daysInWeek.push(today.getDate())    //wednesday
+                    break;
+                case 4:
+                    daysInWeek.push(today.getDate() - 4) //sunday
+                    daysInWeek.push(today.getDate() - 3) //monday
+                    daysInWeek.push(today.getDate() - 2) //tuesday
+                    daysInWeek.push(today.getDate() - 1) //wednesday
+                    daysInWeek.push(today.getDate())    //thursday
+                    break;
+                case 5:
+                    daysInWeek.push(today.getDate() - 5) //sunday
+                    daysInWeek.push(today.getDate() - 4) //monday
+                    daysInWeek.push(today.getDate() - 3) //tuesday
+                    daysInWeek.push(today.getDate() - 2) //wednesday
+                    daysInWeek.push(today.getDate() - 1) //tuesday
+                    daysInWeek.push(today.getDate())    //friday
+                    break;
+                case 6:
+                    daysInWeek.push(today.getDate() - 6) //sunday
+                    daysInWeek.push(today.getDate() - 5) //monday
+                    daysInWeek.push(today.getDate() - 4) //tuesday
+                    daysInWeek.push(today.getDate() - 3) //wednesday
+                    daysInWeek.push(today.getDate() - 2) //tuesday
+                    daysInWeek.push(today.getDate() - 1) //friday
+                    daysInWeek.push(today.getDate())    //saturday
+                    break;
+            }
+
+            limitDay = 7 - daysInWeek.length
+            for(let i=1; i <= limitDay; i++){
+                daysInWeek.push(today.getDate() + i)
+            }
+            //console.log(daysInWeek)
+            return daysInWeek
+        }
+        
         if(value == 1){
             calendar.textContent = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+            resultDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+            localStorage.setItem("query", resultDate)
         }else if(value == 2){
-            let dayDiff = 6 - date.getDay()
-            calendar.textContent = `${date.getDate() - dayDiff} ${months[date.getMonth()]} | ${date.getDay() + dayDiff} ${months[date.getMonth()]}`
+            let d = getDaysOfWeek(date)
+            calendar.textContent = `${d[0]} ${months[date.getMonth()]} | ${d[6]} ${months[date.getMonth()]}`
+            resultDate = `${date.getFullYear()}-${date.getMonth() + 1}-${d[0]}&q=${date.getFullYear()}-${date.getMonth() + 1}-${d[6]}`
+            localStorage.setItem("query",resultDate)
         }else if(value == 3){
             calendar.textContent = `${months[date.getMonth()]} ${date.getFullYear()}`
+            resultDate = `${date.getFullYear()}-${date.getMonth() + 1}-${1}&q=${date.getFullYear()}-${date.getMonth() + 1}-${getDaysInMonth(date.getFullYear(), date.getMonth() + 1)}`
+            localStorage.setItem("query", resultDate)
         }
+
+        return resultDate
     }
+
+
+
+
 
 </script>

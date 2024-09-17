@@ -1,0 +1,50 @@
+<div class="container">
+    <label for="">Cliente</label>
+    <input type="text" class="form-control" id="clientSearch">
+    <ul id="listClients"></ul>
+
+    <button type="button" class="btn borderless text-primary" style="text-decoration: underline;">Ver perfil</button>
+</div>
+
+<script>
+    const clientSearch = document.querySelector('#clientSearch')
+    const baseUrlApiClient = 'http://localhost:8000/api/v1/clients/search'
+    const listClients = document.querySelector('#listClients')
+
+    
+    const getClientSearch = async(q)=>{
+        let url = baseUrlApiClient.concat('?query=',q)
+        const res = await fetch(url)
+        const resDataClients = await res.json()
+
+        listClients.innerHTML = ''
+
+        resDataClients.clients.forEach(el =>{
+            showClient(el)
+        })
+    }
+
+    const showClient = ({id, name})=>{
+        const li = document.createElement('li')
+        li.innerHTML = `
+        <li>
+            <p>${id}</p>
+            <p>${name}</p>
+        </li>
+        `
+
+        listClients.appendChild(li)
+    }
+
+    const filterClientByName = e =>{
+        getClientSearch(e.target.value)
+    }
+
+    const deleteInputSearch = ()=>{
+        if(clientSearch.length == 0){
+            listClients.innerHTML = ''
+        }
+    }
+
+    clientSearch.addEventListener('keyup', e => filterClientByName(e))
+</script>

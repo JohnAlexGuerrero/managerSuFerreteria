@@ -1,0 +1,35 @@
+{% load static %}
+{% load filters %}
+
+<table>
+    <thead>
+        <th>Codigo</th>
+        <th>Descripción</th>
+        <th>Unidad</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Dsct %</th>
+        <th>Total</th>
+        <th>Iva %</th>
+        <th></th>
+    </thead>
+    <tbody id='products-list'>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.codebar }}</td>
+                <td>{{ product.title }}</td>
+                <td>{{ product.unit }}</td>
+                <td>{{ product.get_stock }} {{ product.unit }}</td>
+                <td>{{ product.price|calc_price_unit:product.list_price.list_price_value|format_price }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.price }}</td>
+                <td>
+                    <a href="{% url "product_edit" pk=product.id %}">Edit</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td>No hay productos creados</td></tr>
+        {% endfor %}
+    </tbody>
+</table>

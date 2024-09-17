@@ -3,9 +3,12 @@
 {% block title %}Panel de control - Invoice{% endblock title %}
 
 {% block content %}
-<div>
+
+{% include "clients/search.html" %}
+
+{% comment %} <div>
     {% include "product/list_product.html" %}
-</div>
+</div> {% endcomment %}
 
 <script>
 

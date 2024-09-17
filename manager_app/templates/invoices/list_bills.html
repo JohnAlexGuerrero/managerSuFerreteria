@@ -84,16 +84,24 @@ const setTableInvoices = (bill)=>{
         <td>${bill.customer}</td>
         <td>$ ${bill.value}</td>
         <td>${bill.method}</td>
-        <td>${bill.date} | 4:37 PM</td>
+        <td>${formatDate(bill.date)}</td>
         <td class="badge ${bill.is_paid ? 'text-bg-secondary' : 'text-bg-primary'}">${bill.is_paid ? 'Cancelado' : 'Pendiente'}</td>
     `
     tableEl.appendChild(tr)
 }
 
+const formatDate = (value)=>{
+    var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Agos','Sep','Oct','Nov','Dic']
+    var d = new Date(value)
+    return `${d.getDate()} de ${months[d.getMonth()]}, ${d.getFullYear()}`
+}
+
 filterCalendar.addEventListener('change', e=> {
-    let filterUrl = setCalendar(e.target.value)
-    let url = baseUrlBill.concat("filter/date?query=", filterUrl)
+    setCalendar(e.target.value)
+    let query = localStorage.getItem("query")
+    let url = baseUrlBill.concat("filter/date?query=", query)
     getListInvoices(url)
+    getData()
 })
 
 

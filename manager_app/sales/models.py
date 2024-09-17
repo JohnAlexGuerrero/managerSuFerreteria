@@ -31,7 +31,7 @@ class Bill(models.Model):
 
     class Meta:
         verbose_name = ("Bill")
-        verbose_name_plural = ("4. Ventas")
+        verbose_name_plural = ("Ventas")
         ordering = ('-number_bill',)
 
     def __str__(self):

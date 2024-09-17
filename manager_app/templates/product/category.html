@@ -1,0 +1,18 @@
+<ul>
+    <a hx-get="{% url 'inventory' %}?filter=all" hx-target="#products-list" hx-swap="outerHTML"
+        class="{% if filter_option == all %}active{% endif %}">
+        <li>
+            Todos
+        </li>
+    </a>
+    {% for category in categories %}
+    <a hx-get="{% url 'inventory' %}?filter={{category}}" hx-target="#products-list" hx-swap="outerHTML"
+        class="{% if filter_option == category %}active{% endif %}">
+        <li>
+            {{ category }}
+        </li>
+    </a>
+    {% empty %}
+        <li>No hay tareas pendientes.</li>
+    {% endfor %}
+</ul>

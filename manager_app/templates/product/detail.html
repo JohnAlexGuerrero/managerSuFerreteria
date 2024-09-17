@@ -1,0 +1,12 @@
+{% load static %}
+{% load filters %}
+
+<div hx-target="this" hx-swap="outerHTML"></div>
+    <div><label>producto</label>: {{product.title}}</div>
+    <div><label>codigo</label>: {{product.codebar}}</div>
+    <div><label>Stock</label>: {{product.get_stock}}</div>
+    <div><label>precio unitario</label>: {{product.price|format_price}}</div>
+    <button hx-get="{% url "product_edit" pk=product.id %}" class="btn primary">
+    Click To Edit
+    </button>
+</div>

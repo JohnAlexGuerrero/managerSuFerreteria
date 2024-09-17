@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div id='products-list'>
+    {% include "product/category.html" %}
+    {% include "product/partials/products_list.html" %}
+</div>
+{% endblock content %}

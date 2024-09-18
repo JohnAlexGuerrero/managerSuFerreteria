@@ -98,10 +98,23 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse("Product_detail", kwargs={"pk": self.pk})
     
-    def get_stock(self):
+    def get_total_balance_quantity(self):
         query = Inventory.objects.filter(product=self).order_by('-id').first()
         if query:
             return query.total_balance_quantity
+        return 0
+    
+    def get_sales_quantity(self):
+        query = Inventory.objects.filter(product=self)
+        if query:
+            return query.annotate(qty=Sum('sale_quantity'))[0].qty
+        return 0
+    
+    def get_purchase_quantity(self):
+        query = Inventory.objects.filter(product=self)
+        if query:
+            results =  query.annotate(qty=Sum('purchase_quantity'))
+            return results[0].qty
         return 0
 
 

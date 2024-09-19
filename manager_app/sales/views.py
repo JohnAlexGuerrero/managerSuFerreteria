@@ -1,13 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Sum
 
-from sales.models import Bill, Order
-from main.models import Purchase
+from datetime import datetime
+
+from sales.models import Bill, Order, Customer
+from main.models import Purchase, Product
 from cash_register.models import Transaction
 
 from sales.forms import BillForm, OrderForm
 from django.http import JsonResponse
+
 
 # Create your views here.
 
@@ -62,8 +65,25 @@ def home(request):
 #     })
 
 def create_bill(request):
-    return render(request, 'invoices/create_bill.html', {
-        # 'form': form,
-        # 'order_formset': order_formset
-    })
-
+    number_bill = f'SF{54000 + Bill.objects.count()}'
+    customer = Customer.objects.first()
+    
+    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,6,8))
+    
+    if new_bill:
+      return redirect('invoice', kwargs={'pk': new_bill.id})
+    
+    
+    return redirect('home')
+    
+    
+def invoice(request, *args, **kwargs):
+    name_template = 'invoices/create_bill.html'
+    
+    invoice = get_object_or_404(Bill, pk=kwargs['pk'])
+    
+    if invoice:
+        context = {"invoice":invoice}
+        return render(request, name_template, context)
+    else:
+        redirect('home')

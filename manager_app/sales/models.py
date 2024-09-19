@@ -25,9 +25,9 @@ class Bill(models.Model):
     number_bill = models.CharField(max_length=50, unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     total_amount = models.FloatField(blank=True, null=True, default=0)
-    is_paid = models.BooleanField(default=True)
+    is_paid = models.BooleanField(default=False)
     
-    sale_date = models.DateField(auto_now_add=True)
+    sale_date = models.DateField(auto_now_add=False)
 
     class Meta:
         verbose_name = ("Bill")

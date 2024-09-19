@@ -83,18 +83,13 @@ def list_products(request):
     })
     
 def filter_products(request):
+    name_template = 'product/partials/list.html'
     items = Product.objects.filter(title__contains=request.GET.get('query'))
-    return JsonResponse({
-        "items":[
-            {
-                "id":item.id,
-                "title":item.title,
-                "price": f'{round((item.price / item.list_price.list_price_value),0):,.0f}',
-                "category": str(item.category)
-            }
-            for item in items
-        ]
-    })
+    context = {
+        "items":items
+    }
+    return render(request, name_template, context)
+    # return JsonResponse(context)
 
 #view para export data
 def export_data_inventory(request):

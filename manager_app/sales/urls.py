@@ -1,8 +1,9 @@
 from django.urls import path
-from sales.views import create_bill, home
+from sales.views import create_bill, home, invoice
 
 urlpatterns = [
     path('', home, name='home'),
     path('invoices/new/', create_bill, name='invoice_new'),
+    path('invoices/<int:pk>/', invoice, name='invoice'),
 
 ]

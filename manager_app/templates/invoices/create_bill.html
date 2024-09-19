@@ -1,16 +1,39 @@
-{% extends "admin/base_site.html" %}
+{% extends "base/base.html" %}
+
+{% load static %}
+{% load filters %}
 
 {% block title %}Panel de control - Invoice{% endblock title %}
 
 {% block content %}
 
-{% include "clients/search.html" %}
+{{invoice.number_bill}}
 
-{% comment %} <div>
-    {% include "product/list_product.html" %}
-</div> {% endcomment %}
+{{invoice.sale_date}}
 
-<script>
+<div>
+    <div hx-target="this" hx-swap="outerHTML">
+        <div><label>First Name</label>: {{invoice.customer.customer_name}}</div>
+        <div><label>Direccion</label>: {{invoice.customer.customer_address}}</div>
+        <div><label>Email</label>: {{invoice.customer.email}}</div>
+        <div><label>CC / NIT</label>: {{invoice.customer.id_document}}</div>
+        <button hx-get="/contact/1/edit" class="btn primary">
+        Click To Edit
+        </button>
+    </div>
+</div>
 
-</script>
+{{invoice.total_amount}}
+
+
+<div>
+
+    <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
+
+    <ul id="search-results">
+        {% for item in items %}
+        <li>{{item.title}}</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock content %}

@@ -81,15 +81,16 @@ def list_products(request):
             for item in items
         ]
     })
-    
+
+#view para buscar productos
 def filter_products(request):
     name_template = 'product/partials/list.html'
     items = Product.objects.filter(title__contains=request.GET.get('query'))
+
     context = {
         "items":items
     }
     return render(request, name_template, context)
-    # return JsonResponse(context)
 
 #view para export data
 def export_data_inventory(request):

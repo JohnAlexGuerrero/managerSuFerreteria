@@ -1,0 +1,33 @@
+{% load static %}
+{% load filters %}
+
+<table >
+    <thead>
+        <th>codigo</th>
+        <th>descripcion</th>
+        <th>cantidad</th>
+        <th>valor unitario</th>
+        <th>dsct</th>
+        <th>impuesto</th>
+        <th>total</th>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{item.codebar}}</td>
+            <td>{{item.description}}</td>
+            <td>
+                <input type="number" value="1" min="0" hx-trigger="keyup" hx-target="#total-result" hx-swap="innerHTML">
+            </td>
+            <td>
+                <input type="number" value="{{item.price|calc_price_unit:item.list_price.list_price_value}}" step="500">
+            </td>
+            <td>0</td>
+            <td>019</td>
+            <td >
+                <p id="total-result">{{item.total}}</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

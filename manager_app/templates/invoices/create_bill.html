@@ -25,15 +25,28 @@
 
 {{invoice.total_amount}}
 
+{% if invoice.is_paid %}
+    <h1>Cancelada</h1>
+{% else %}
+    <h1>Sin Cancelar</h1>
+
+{% endif %}
 
 <div>
+    <h2>Productos</h2>
+    
+    <div>
+        <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
+        <div id="search-results">
+            {% include "product/partials/list.html" %}
+        </div>
+    </div>
+</div>
 
-    <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
+{% include "invoices/cart/form.html" %}
 
-    <ul id="search-results">
-        {% for item in items %}
-        <li>{{item.title}}</li>
-        {% endfor %}
-    </ul>
+<div id="cart-shopping">
+    {% include "invoices/cart/list.html" %}
+
 </div>
 {% endblock content %}

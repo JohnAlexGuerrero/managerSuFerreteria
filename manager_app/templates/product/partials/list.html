@@ -1,5 +1,32 @@
-<ul>
-{% for item in items %}
-<li>{{item.title}}</li>
-{% endfor %}
-</ul>
+<div>
+
+    <table>
+        <thead>
+            <th>Codigo</th>
+            <th>Descripcion</th>
+            <th>Disponible</th>
+            <th>Unidad</th>
+            <th>Precio</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{item.codebar}}</td>
+                <td>{{item.title}}</td>
+                <td>{{item.get_total_balance_quantity}}</td>
+                <td>{{item.unit.title}}</td>
+                <td>{{item.price}}</td>
+                <td>
+                    <button hx-get="{% url "add_cart" pk=item.id %}" hx-target="#cart-shopping" hx-swap="outerHTML">
+                        click
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            no hay productos
+            {% endfor %}
+    
+        </tbody>
+    </table>
+</div>

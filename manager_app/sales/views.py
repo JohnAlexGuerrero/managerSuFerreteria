@@ -11,6 +11,8 @@ from cash_register.models import Transaction
 from sales.forms import BillForm, OrderForm
 from django.http import JsonResponse
 
+#variables locales
+items_in_order = []
 
 # Create your views here.
 
@@ -68,12 +70,10 @@ def create_bill(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
     
-    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,6,8))
+    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,1))
     
     if new_bill:
       return redirect('invoice', kwargs={'pk': new_bill.id})
-    
-    
     return redirect('home')
     
     
@@ -81,9 +81,42 @@ def invoice(request, *args, **kwargs):
     name_template = 'invoices/create_bill.html'
     
     invoice = get_object_or_404(Bill, pk=kwargs['pk'])
+    orders = Order.objects.filter(bill=invoice)
+
     
     if invoice:
-        context = {"invoice":invoice}
+        context = {
+            "invoice":invoice,
+            "items": Product.objects.all().order_by('title'),
+            "orders": orders,
+
+        }
+        
         return render(request, name_template, context)
     else:
         redirect('home')
+    
+#view donde se guarda la informacion de los productos seleccionados
+def add_cart(request, *args, **kwargs):
+    name_template = 'invoices/cart/form.html'
+    item = get_object_or_404(Product, pk=kwargs['pk'])
+    bill = Bill.objects.all().order_by('sale_date').first()
+    
+    if item:
+        form = OrderForm()
+        
+    context = {
+        "form": form,
+        "item": item,
+        "bill":bill
+    }
+    # return render(request, name_template)
+    return render(request, name_template, context)
+
+#view para guardar pedido
+def add_order(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+            redirect('invoice', kwargs={'pk': request.POST.get('bill')})

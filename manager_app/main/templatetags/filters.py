@@ -6,6 +6,10 @@ register = template.Library()
 def calc_price_unit(value, list_price):
     return round(value / list_price)
 
+@register.filter(name="calculate_total")
+def calculate_total(value, qty):
+    return round(value * qty)
+
 @register.filter(name='format_price')
 def format_price(value):
     return f'$ {value:,.0f}'

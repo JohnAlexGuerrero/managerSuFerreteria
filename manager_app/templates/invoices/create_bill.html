@@ -11,17 +11,7 @@
 
 {{invoice.sale_date}}
 
-<div>
-    <div hx-target="this" hx-swap="outerHTML">
-        <div><label>First Name</label>: {{invoice.customer.customer_name}}</div>
-        <div><label>Direccion</label>: {{invoice.customer.customer_address}}</div>
-        <div><label>Email</label>: {{invoice.customer.email}}</div>
-        <div><label>CC / NIT</label>: {{invoice.customer.id_document}}</div>
-        <button hx-get="/contact/1/edit" class="btn primary">
-        Click To Edit
-        </button>
-    </div>
-</div>
+{% include "customer/detail.html" %}
 
 {{invoice.total_amount}}
 

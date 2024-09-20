@@ -1,0 +1,11 @@
+{% load static %}
+{% load filters %}
+
+<ul>
+    {% for customer in customers %}
+        <li>
+            {{ customer.customer_name|format_capitalize }}
+            <button hx-get="{% url "customer_selected" pk=customer.id %}" hx-target="#customer-detail" hx-swap="outerHTML">seleccionar</button>
+        </li>     
+    {% endfor %}
+</ul>

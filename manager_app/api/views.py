@@ -18,24 +18,6 @@ from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
 
-#api clients
-def search_client_by_name(request):
-    customers = Customer.objects.filter(
-        Q(customer_name__icontains=request.GET.get('query'))
-    )
-    
-    return JsonResponse({
-        "clients":[
-            {
-                "id": client.id_document,
-                "name": client.customer_name,
-                "address": client.customer_address,
-                "contact": client.customer_mobile,
-                "email": client.email
-            }
-            for client in customers
-        ]
-    })
     
 #api sales
 def list_bills(request):

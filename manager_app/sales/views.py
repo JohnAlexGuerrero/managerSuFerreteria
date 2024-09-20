@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from django.db.models import Q
 
 from datetime import datetime
 
@@ -70,7 +71,7 @@ def create_bill(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
     
-    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,1))
+    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,2))
     
     if new_bill:
       return redirect('invoice', kwargs={'pk': new_bill.id})
@@ -120,3 +121,34 @@ def add_order(request):
         if form.is_valid():
             form.save()
             redirect('invoice', kwargs={'pk': request.POST.get('bill')})
+            
+            
+#view customer search
+def search_customer(request):
+    template_name = 'customer/partials/search.html'
+    return render(request, template_name)
+
+#view filter customers
+def filters_customers(request):
+    template_name = 'customer/partials/list.html'
+    
+    customers = Customer.objects.filter(
+        Q(customer_name__icontains=request.GET.get('query'))
+    )
+    
+    context = {
+        "customers":customers.order_by('customer_name')
+    }
+    
+    return render(request, template_name, context)
+
+#view select customer
+def select_customer(request, *args, **kwargs):
+    template_name = 'customer/detail.html'
+    customer = get_object_or_404(Customer, pk=kwargs['pk'])
+
+    context = {
+        "customer": customer
+    }
+    
+    return render(request, template_name, context)

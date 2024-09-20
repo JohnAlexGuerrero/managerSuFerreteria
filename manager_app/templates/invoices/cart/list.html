@@ -1,22 +1,27 @@
 {% load static %}
 {% load filters %}
 
-<h2>Cart</h2>
-<ul>
-    {% for item in orders %}
-    <li>
-        <p>
-            {{item.product.title}}
-        </p>
-        <p>
-            {{item.quantity}}
-        </p>
-        <p>
-            {{item.price}}
-        </p>
-        <p>
-            {{item.price|calculate_total:item.quantity}}
-        </p>
-    </li>
-    {% endfor %}
-</ul>
+<div id="cart-shopping">
+    <h2>Cart</h2>
+
+    <ul>
+        {% for item in orders %}
+        <li>
+            <p>
+                {{item.product.title}}
+            </p>
+            <p>
+                {{item.quantity}}
+            </p>
+            <p>
+                {{item.price}}
+            </p>
+            <p>
+                {{item.price|calculate_total:item.quantity}}
+            </p>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% include "invoices/cart/form.html" %}
+</div>

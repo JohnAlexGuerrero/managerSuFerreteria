@@ -71,26 +71,25 @@ def create_bill(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
     
-    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,2))
+    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,3))
+    print(new_bill)
     
     if new_bill:
       return redirect('invoice', kwargs={'pk': new_bill.id})
     return redirect('home')
-    
     
 def invoice(request, *args, **kwargs):
     name_template = 'invoices/create_bill.html'
     
     invoice = get_object_or_404(Bill, pk=kwargs['pk'])
     orders = Order.objects.filter(bill=invoice)
-
     
     if invoice:
         context = {
             "invoice":invoice,
             "items": Product.objects.all().order_by('title'),
             "orders": orders,
-
+            "customer": invoice.customer
         }
         
         return render(request, name_template, context)
@@ -101,7 +100,7 @@ def invoice(request, *args, **kwargs):
 def add_cart(request, *args, **kwargs):
     name_template = 'invoices/cart/form.html'
     item = get_object_or_404(Product, pk=kwargs['pk'])
-    bill = Bill.objects.all().order_by('sale_date').first()
+    bill = Bill.objects.all().order_by('-id').first()
     
     if item:
         form = OrderForm()
@@ -111,18 +110,26 @@ def add_cart(request, *args, **kwargs):
         "item": item,
         "bill":bill
     }
-    # return render(request, name_template)
+
     return render(request, name_template, context)
 
 #view para guardar pedido
 def add_order(request):
+    template_name = 'invoices/cart/list.html'
+    
     if request.method == 'POST':
         form = OrderForm(request.POST)
+        pk = request.POST.get('bill')
+        
         if form.is_valid():
+            orders = Order.objects.filter(bill__id=pk)
+            print('post active')
             form.save()
-            redirect('invoice', kwargs={'pk': request.POST.get('bill')})
-            
-            
+            context = {
+                "orders": orders
+            }
+            return render(request, template_name, context)
+                
 #view customer search
 def search_customer(request):
     template_name = 'customer/partials/search.html'

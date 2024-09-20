@@ -6,7 +6,7 @@ class BillForm(forms.ModelForm):
     
     class Meta:
         model = Bill
-        fields = ("number_bill","customer","total_amount")
+        fields = ("number_bill","customer","total_amount","sale_date")
 
 class OrderForm(forms.ModelForm):
     

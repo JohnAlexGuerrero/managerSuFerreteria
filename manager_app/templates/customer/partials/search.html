@@ -1,0 +1,10 @@
+<div>
+    <label>First Name</label>: 
+    <input type="search" name="query" hx-get="{% url "customer_filters" %}" hx-trigger="input" hx-target="#customer-results">
+</div>
+<div><label>Direccion</label>: </div>
+<div><label>Email</label>: </div>
+<div><label>CC / NIT</label>:</div>
+<div id="customer-results">
+    {% include "customer/partials/list.html" %}
+</div>

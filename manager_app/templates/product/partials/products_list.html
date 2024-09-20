@@ -1,35 +1,48 @@
 {% load static %}
 {% load filters %}
 
+<div id="carrito">
+    <a hx-get="{% url "get_product_selected" %}">
+
+        exportar {{count}}
+    </a>
+</div>
+
 <table>
     <thead>
-        <th>Codigo</th>
+        <th>
+            <input type="checkbox" name="" id="">
+        </th>
         <th>Descripción</th>
+        <th>SKU</th>
         <th>Unidad</th>
-        <th>Cantidad</th>
+        <th>Entradas</th>
+        <th>Vendidos</th>
+        <th>Disponible</th>
         <th>Precio Unitario</th>
-        <th>Dsct %</th>
-        <th>Total</th>
         <th>Iva %</th>
-        <th></th>
+        <th>modificado</th>
     </thead>
     <tbody id='products-list'>
-        {% for product in products %}
+        {% for item in inventory %}
             <tr>
-                <td>{{ product.codebar }}</td>
-                <td>{{ product.title }}</td>
-                <td>{{ product.unit }}</td>
-                <td>{{ product.get_stock }} {{ product.unit }}</td>
-                <td>{{ product.price|calc_price_unit:product.list_price.list_price_value|format_price }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.price }}</td>
                 <td>
-                    <a href="{% url "product_edit" pk=product.id %}">Edit</a>
+                    <input type="checkbox" hx-get="{% url "selected_product" pk=item.id %}" hx-target="#carrito" value="{{ item.id }}">
                 </td>
+                <td>{{ item.title|format_capitalize }}</td>
+                <td>{{ item.codebar }}</td>
+                <td>{{ item.unit }}</td>
+                <td>{{ item.get_purchase_quantity }}</td>
+                <td>{{ item.get_sales_quantity }}</td>
+                <td>{{ item.get_total_balance_quantity }}</td>
+                <td>{{ item.price|calc_price_unit:item.list_price.list_price_value|format_price }}</td>
+                <td>19 %</td>
+                <td>{{ item.updated_at }}</td>
+
             </tr>
         {% empty %}
             <tr><td>No hay productos creados</td></tr>
         {% endfor %}
     </tbody>
 </table>
+

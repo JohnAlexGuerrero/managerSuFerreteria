@@ -1,16 +1,38 @@
-{% extends "admin/base_site.html" %}
+{% extends "base/base.html" %}
+
+{% load static %}
+{% load filters %}
 
 {% block title %}Panel de control - Invoice{% endblock title %}
 
 {% block content %}
 
-{% include "clients/search.html" %}
+{{invoice.number_bill}}
 
-{% comment %} <div>
-    {% include "product/list_product.html" %}
-</div> {% endcomment %}
+{{invoice.sale_date}}
 
-<script>
+{% include "customer/detail.html" %}
 
-</script>
+{{invoice.total_amount}}
+
+{% if invoice.is_paid %}
+    <h1>Cancelada</h1>
+{% else %}
+    <h1>Sin Cancelar</h1>
+
+{% endif %}
+
+<div>
+    <h2>Productos</h2>
+    
+    <div>
+        <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
+        <div id="search-results">
+            {% include "product/partials/list.html" %}
+        </div>
+    </div>
+</div>
+
+{% include "invoices/cart/list.html" %}
+
 {% endblock content %}

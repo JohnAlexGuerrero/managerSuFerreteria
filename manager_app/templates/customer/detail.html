@@ -1,0 +1,14 @@
+{% load static %}
+{% load filters %}
+
+<div id="customer-detail">
+    <div hx-target="this" hx-swap="outerHTML">
+        <div><label>First Name</label>: {{customer.customer_name|format_capitalize}}</div>
+        <div><label>Direccion</label>: {{customer.customer_address}}</div>
+        <div><label>Email</label>: {{customer.email}}</div>
+        <div><label>CC / NIT</label>: {{customer.id_document}}</div>
+        <button hx-get="{% url "customer_search" %}" class="btn primary">
+            Buscar cliente
+        </button>
+    </div>
+</div>

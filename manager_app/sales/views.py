@@ -71,20 +71,19 @@ def create_bill(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
     
-    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,3))
-    print(new_bill)
+    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,8))
     
     if new_bill:
-      return redirect('invoice', kwargs={'pk': new_bill.id})
+        return redirect('invoice', kwargs={"pk": new_bill.id})
+    
     return redirect('home')
     
 def invoice(request, *args, **kwargs):
     name_template = 'invoices/create_bill.html'
-    
     invoice = get_object_or_404(Bill, pk=kwargs['pk'])
-    orders = Order.objects.filter(bill=invoice)
     
     if invoice:
+        orders = Order.objects.filter(bill=invoice)
         context = {
             "invoice":invoice,
             "items": Product.objects.all().order_by('title'),

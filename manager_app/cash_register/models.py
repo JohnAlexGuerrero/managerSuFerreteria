@@ -27,4 +27,14 @@ class Transaction(models.Model):
 
     def get_absolute_url(self):
         return reverse("Transaction_detail", kwargs={"pk": self.pk})
+    
+    def save(self, *args, **kwargs):
+        bill = Bill.objects.get(id=self.bill.id)
+        if bill.is_paid != True:
+            balance_res = bill.total_amount - self.total
+            if balance_res == 0:
+                bill.is_paid = True
+                bill.save()
+            return super().save(*args, **kwargs)
+                
 

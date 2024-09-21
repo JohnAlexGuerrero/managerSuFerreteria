@@ -13,7 +13,7 @@
 
 {% include "customer/detail.html" %}
 
-{{invoice.total_amount}}
+{{invoice.total_amount|format_price}}
 
 {% if invoice.is_paid %}
     <h1>Cancelada</h1>
@@ -22,17 +22,21 @@
 
 {% endif %}
 
-<div>
-    <h2>Productos</h2>
-    
-    <div>
-        <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
-        <div id="search-results">
-            {% include "product/partials/list.html" %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2>Productos</h2>
+            <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
+            <div id="search-results">
+                {% include "product/partials/list.html" %}
+            </div>
+        <div>
+        <div class="col-sm-4">
+            {% include "invoices/cart/list.html" %}
         </div>
+    <div>
     </div>
 </div>
 
-{% include "invoices/cart/list.html" %}
 
 {% endblock content %}

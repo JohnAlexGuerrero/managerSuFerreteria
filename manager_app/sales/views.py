@@ -149,7 +149,7 @@ def filters_customers(request):
     )
     
     context = {
-        "customers":customers.order_by('customer_name')
+        "customers": customers.order_by('customer_name')
     }
     
     return render(request, template_name, context)
@@ -160,10 +160,17 @@ def select_customer(request, *args, **kwargs):
     customer = get_object_or_404(Customer, pk=kwargs['pk'])
 
     context = {
-        "customer": customer
+        "customer": update_customer_in_invoice(customer)
     }
     
     return render(request, template_name, context)
+
+#function update customer in invoice
+def update_customer_in_invoice(customer):
+    bill = Bill.objects.all().order_by('-id').first()
+    bill.customer = customer
+    bill.save()
+    return bill.customer
 
 #view payment invoice
 def payment_invoice(request, *args, **kwargs):

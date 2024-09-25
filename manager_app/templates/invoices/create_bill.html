@@ -19,7 +19,8 @@
     <h1>Cancelada</h1>
 {% else %}
     <h1>Sin Cancelar</h1>
-
+    <a hx-get="{% url "invoice_pay"  invoice.id %}">Pagar</a>
+    
 {% endif %}
 
 <div class="container">

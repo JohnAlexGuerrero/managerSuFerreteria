@@ -1,0 +1,15 @@
+<div>
+    <form method='POST' hx-post="{% url "invoice_pay" bill.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% comment %} <input type="text" value="{{bill.id}}" name="bill" style="display:none;">
+        <label>Detalle</label>
+        <input type="text" value="{{item.title}}" >
+        <input type="text" value="{{item.id}}" name="product" style="display:none;">
+        <label>Cantidad</label>
+        <input type="number" value="1" name="quantity">
+        <label>Precio</label>
+        <input type="text" value="{{item.price}}" name="price"> {% endcomment %}
+        <input type="submit" value="guardar">
+    </form>
+</div>

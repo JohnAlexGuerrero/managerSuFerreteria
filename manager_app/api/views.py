@@ -33,7 +33,7 @@ def list_bills(request):
                 "number_bill": bill.number_bill,
                 "customer": bill.customer.customer_name,
                 "value": f'{bill.total_amount:,.0f}',
-                "date": bill.sale_date,
+                "date": datetime(bill.sale_date),
                 "is_paid": bill.is_paid,
                 "method": Transaction.objects.get(bill=bill).payment_method.capitalize()
             }

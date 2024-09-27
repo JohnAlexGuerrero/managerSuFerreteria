@@ -6,8 +6,13 @@ from main.models import Product, Category, Inventory
 
 from main.forms import InventoryStockForm
 
-#array local
-products_selected = []
+
+#function pagintator of products
+def paginator_products(page_number):
+    product_list = Product.objects.all().order_by('title')
+    paginator = Paginator(product_list, 15)
+    page_obj = paginator.get_page(page_number)
+    return page_obj
 
 # Create your views here.
 def inventory(request):
@@ -34,7 +39,6 @@ def selected_product(request, *args, **kwargs):
     add_product_select(product)
     
     context = {
-        "count": len(products_selected)
     }
     return render(request, name_template, context)
 
@@ -96,22 +100,6 @@ def filter_products(request):
 def export_data_inventory(request):
     name_template = 'inventory/list_products.html'
     context = {}
-    print(get_product_select())
     return render(request, name_template, context)
     
-#function que guarda un producto seleccionado en un array
-def add_product_select(product):
-    products_selected.append(product)
     
-#function que obtiene la informacion del array local que guarda los productos seleccionados
-def get_product_select():
-    data = [
-        {
-            "id": item.id,
-            "description": item.title,
-            "codebar": item.codebar
-        }
-        for item in products_selected
-    ]
-    
-    return data

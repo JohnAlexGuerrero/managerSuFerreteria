@@ -7,20 +7,22 @@ from datetime import datetime
 
 from sales.models import Bill, Order, Customer
 from main.models import Purchase, Product
+from main.views import paginator_products
 from cash_register.models import Transaction
 
 from sales.forms import BillForm, OrderForm
+from cash_register.forms import TransactionForm
+
 from django.http import JsonResponse
 
 #variables locales
 items_in_order = []
 
 # Create your views here.
-
-
 def home(request):
     template_name = 'invoices/index.html'
     return render(request, template_name)
+
 
 # def total_balance(request):
 #     total_sales = Transaction.objects.all().aggregate(Sum('total'))['total__sum']
@@ -70,24 +72,22 @@ def home(request):
 def create_bill(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
+    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime.now())
     
-    new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime(2024,7,3))
-    print(new_bill)
-    
-    if new_bill:
-      return redirect('invoice', kwargs={'pk': new_bill.id})
-    return redirect('home')
+    return redirect('invoice', {'pk': new_bill.id})
     
 def invoice(request, *args, **kwargs):
     name_template = 'invoices/create_bill.html'
-    
     invoice = get_object_or_404(Bill, pk=kwargs['pk'])
-    orders = Order.objects.filter(bill=invoice)
+    page_number = request.GET.get("page")
+    
+    items = paginator_products(page_number)
     
     if invoice:
+        orders = Order.objects.filter(bill=invoice)
         context = {
             "invoice":invoice,
-            "items": Product.objects.all().order_by('title'),
+            "items": items,
             "orders": orders,
             "customer": invoice.customer
         }
@@ -123,12 +123,23 @@ def add_order(request):
         
         if form.is_valid():
             orders = Order.objects.filter(bill__id=pk)
-            print('post active')
             form.save()
             context = {
                 "orders": orders
             }
             return render(request, template_name, context)
+    
+#view para listar los productos contenidos en el pedido
+def list_order(request, *args, **kwargs):
+    template_name = 'invoices/cart/list.html'
+    pk = kwargs['pk']
+    orders = Order.objects.filter(bill__id=pk)
+    
+    context = {
+        "orders": orders,
+    }
+    
+    return render(request, template_name, context)
                 
 #view customer search
 def search_customer(request):
@@ -144,7 +155,7 @@ def filters_customers(request):
     )
     
     context = {
-        "customers":customers.order_by('customer_name')
+        "customers": customers.order_by('customer_name')
     }
     
     return render(request, template_name, context)
@@ -155,7 +166,38 @@ def select_customer(request, *args, **kwargs):
     customer = get_object_or_404(Customer, pk=kwargs['pk'])
 
     context = {
-        "customer": customer
+        "customer": update_customer_in_invoice(customer)
     }
+    
+    return render(request, template_name, context)
+
+#function update customer in invoice
+def update_customer_in_invoice(customer):
+    bill = Bill.objects.all().order_by('-id').first()
+    bill.customer = customer
+    bill.save()
+    return bill.customer
+
+#view payment invoice
+def payment_invoice(request, *args, **kwargs):
+    template_name = 'invoices/payment/pay.html'
+    bill = Bill.objects.get(id=kwargs['pk'])
+    
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+          form.save()
+          return redirect('home')
+    else:
+        data = {
+            "transaction_date": datetime.now(),
+            "bill": bill,
+            "total": bill.total_amount,
+            "payment_method": ''
+        }
+        
+        form = TransactionForm(initial=data)
+        
+    context = { "form": form, "bill": bill }
     
     return render(request, template_name, context)

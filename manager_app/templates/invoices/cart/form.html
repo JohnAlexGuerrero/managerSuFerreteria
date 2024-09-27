@@ -1,4 +1,4 @@
-<div>
+<div id="cart-shopping">
     <form method='POST' hx-post="{% url "add_order" %}">
         {% csrf_token %}
         <input type="text" value="{{bill.id}}" name="bill" style="display:none;">
@@ -10,5 +10,6 @@
         <label>Precio</label>
         <input type="text" value="{{item.price}}" name="price">
         <input type="submit" value="guardar">
+        <button class="btn" hx-get="{% url "list_order" pk=bill.id %}" hx-target="#cart-shopping" hx-swap="outerHTML">Cancel</button>
     </form>
 </div>

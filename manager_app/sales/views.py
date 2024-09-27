@@ -19,8 +19,6 @@ from django.http import JsonResponse
 items_in_order = []
 
 # Create your views here.
-
-
 def home(request):
     template_name = 'invoices/index.html'
     return render(request, template_name)
@@ -74,13 +72,9 @@ def home(request):
 def create_bill(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
-    
     new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime.now())
     
-    if new_bill:
-        return redirect('invoice', kwarg={"pk": new_bill.id})
-    
-    return redirect('home')
+    return redirect('invoice', {'pk': new_bill.id})
     
 def invoice(request, *args, **kwargs):
     name_template = 'invoices/create_bill.html'
@@ -134,6 +128,18 @@ def add_order(request):
                 "orders": orders
             }
             return render(request, template_name, context)
+    
+#view para listar los productos contenidos en el pedido
+def list_order(request, *args, **kwargs):
+    template_name = 'invoices/cart/list.html'
+    pk = kwargs['pk']
+    orders = Order.objects.filter(bill__id=pk)
+    
+    context = {
+        "orders": orders,
+    }
+    
+    return render(request, template_name, context)
                 
 #view customer search
 def search_customer(request):

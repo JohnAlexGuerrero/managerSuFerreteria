@@ -1,5 +1,5 @@
 <div>
-    <form method='POST' hx-post="{% url "invoice_pay" bill.id %}">
+    <form method='POST' hx-post="{% url "invoice_pay" bill.id %}" hx-target="#status-bill" hx-swap="outerHTML">
         {% csrf_token %}
         {{ form.as_p }}
         {% comment %} <input type="text" value="{{bill.id}}" name="bill" style="display:none;">

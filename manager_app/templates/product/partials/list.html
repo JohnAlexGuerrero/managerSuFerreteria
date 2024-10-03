@@ -18,7 +18,7 @@
                 <td>{{item.unit.title}}</td>
                 <td>{{item.price}}</td>
                 <td>
-                    <button hx-get="{% url "add_cart" pk=item.id %}" hx-target="#cart-shopping" hx-swap="outerHTML">
+                    <button hx-get="{% url "add_cart" pk=item.id %}" hx-target="#cart-list-shopping" hx-swap="outerHTML">
                         click
                     </button>
                 </td>

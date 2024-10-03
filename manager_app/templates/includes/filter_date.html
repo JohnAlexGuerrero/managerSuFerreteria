@@ -1,10 +1,10 @@
-<select class="form-select" aria-label="Default select example" id="filterCalendar">
-    <option value="0" selected>Filtrar</option>
-    <option value="1">Diario</option>
-    <option value="2">Semanal</option>
-    <option value="3">Mensual</option>
-    <option value="4">Rango personalizado</option>
-</select>
+
+<div id="dateFilterContent">
+    <input type="text" class="form-control p-2" style="width:40%;" value={{today}}>
+</div>
+
+
+
 
 <form method="post">
     {% csrf_token %}

@@ -5,6 +5,8 @@ from django.db.models import Q
 
 from datetime import datetime
 
+from django.views.generic import CreateView
+
 from sales.models import Bill, Order, Customer
 from main.models import Purchase, Product
 from main.views import paginator_products
@@ -21,7 +23,13 @@ items_in_order = []
 # Create your views here.
 def home(request):
     template_name = 'invoices/index.html'
-    return render(request, template_name)
+    
+    context = {
+        "today": datetime.now().strftime('%d-%B-%Y')
+    }
+    print(context)
+    
+    return render(request, template_name, context)
 
 
 # def total_balance(request):
@@ -69,12 +77,27 @@ def home(request):
 #         "total": bill.total_amount,
 #     })
 
-def create_bill(request):
+#view CBVs crea una instancia de la factura nueva
+class BillCreateView(CreateView):
+    model = Bill
+    form_class = BillForm
+    template_name = "invoices/invoice.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["customer"] = Customer.objects.first()
+        context['items'] = Product.objects.all()
+        context['orders'] = items_in_order
+        return context
+    
+
+
+def create_invoice(request):
     number_bill = f'SF{54000 + Bill.objects.count()}'
     customer = Customer.objects.first()
     new_bill = Bill.objects.create(number_bill=number_bill, customer=customer, sale_date=datetime.now())
     
-    return redirect('invoice', {'pk': new_bill.id})
+    return redirect('invoice', kwargs={'pk': new_bill.id})
     
 def invoice(request, *args, **kwargs):
     name_template = 'invoices/create_bill.html'
@@ -98,20 +121,56 @@ def invoice(request, *args, **kwargs):
     
 #view donde se guarda la informacion de los productos seleccionados
 def add_cart(request, *args, **kwargs):
-    name_template = 'invoices/cart/form.html'
+    name_template = 'invoices/cart/list.html'
     item = get_object_or_404(Product, pk=kwargs['pk'])
-    bill = Bill.objects.all().order_by('-id').first()
     
-    if item:
-        form = OrderForm()
+    #funcion que guarda el pedido en memoria cache
+    def add_order_in_cart(item):
+        order = {
+            "id": item.id,
+            "product": item.title,
+            "codebar": item.codebar,
+            "qty": 1,
+            "price": item.price,
+            "total": 0,
+            "list_price": item.list_price.list_price_value
+        }
         
+        items_in_order.append(order)
+        return items_in_order
+
     context = {
-        "form": form,
         "item": item,
-        "bill":bill
+        "orders": add_order_in_cart(item)
     }
 
     return render(request, name_template, context)
+
+#view add one item a product in order
+def plus_item(request, *args, **kwargs):
+    template_name = 'invoices/cart/list.html'
+    
+    for product in items_in_order:
+        if product['id'] == kwargs['pk']:
+            product['qty'] += 1
+            break
+
+    context = {"orders": items_in_order}
+    return render(request, template_name, context)
+
+#view minus one item a product in order
+def minus_item(request, *args, **kwargs):
+    template_name = 'invoices/cart/list.html'
+    
+    for product in items_in_order:
+        if product['id'] == kwargs['pk']:
+            product['qty'] -= 1
+            if product['qty'] == 0:
+                items_in_order.remove(product)
+            break
+        
+    context = {"orders": items_in_order}
+    return render(request, template_name, context)
 
 #view para guardar pedido
 def add_order(request):
@@ -166,7 +225,8 @@ def select_customer(request, *args, **kwargs):
     customer = get_object_or_404(Customer, pk=kwargs['pk'])
 
     context = {
-        "customer": update_customer_in_invoice(customer)
+        # "customer": update_customer_in_invoice(customer)
+        "customer": customer
     }
     
     return render(request, template_name, context)

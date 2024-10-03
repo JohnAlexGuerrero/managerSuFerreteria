@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2y9i3ge656481lyy2q4fub4h3e3bi69g'#'django-insecure-qha7-y+!f61yee!6b_82b^acs)$&9uc3+*8vy^m(-%swsmry#9'
+SECRET_KEY = '2fcyy48a0zjfuuwg55m0frz25to5jk21'#'django-insecure-qha7-y+!f61yee!6b_82b^acs)$&9uc3+*8vy^m(-%swsmry#9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'django_htmx',
     'corsheaders',
+    
     'main',
     'sales',
     'cash_register',
@@ -55,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 JAZZMIN_UI_TWEAKS = {
@@ -184,7 +190,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# Directorio donde se recopilan los archivos estáticos cuando usas el comando collectstatic.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Directorios donde Django buscará archivos estáticos específicos de la aplicación.
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

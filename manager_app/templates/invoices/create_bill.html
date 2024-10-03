@@ -15,13 +15,14 @@
 
 {{invoice.total_amount|format_price}}
 
-{% if invoice.is_paid %}
-    <h1>Cancelada</h1>
-{% else %}
-    <h1>Sin Cancelar</h1>
-    <a hx-get="{% url "invoice_pay"  invoice.id %}">Pagar</a>
-    
-{% endif %}
+<div id="status-bill">    
+    {% if invoice.is_paid %}
+        <h1>Cancelada</h1>
+    {% else %}
+        <h1>Sin Cancelar</h1>
+        <a hx-get="{% url "invoice_pay"  invoice.id %}">Pagar</a>
+    {% endif %}
+</div>
 
 <div class="container">
     <div class="row">
@@ -38,6 +39,4 @@
     <div>
     </div>
 </div>
-
-
 {% endblock content %}

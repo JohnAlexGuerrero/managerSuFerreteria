@@ -3,7 +3,8 @@
 
 <div id="customer-detail">
     <div hx-target="this" hx-swap="outerHTML">
-        <div><label>First Name</label>: {{customer.customer_name|format_capitalize}}</div>
+        <div><label>id</label>:<input type="number" value="{{customer.id}}" id="id_customer" name="customer"></div>
+        <div><label>Nombres</label>: {{customer.customer_name|format_capitalize}}</div>
         <div><label>Direccion</label>: {{customer.customer_address}}</div>
         <div><label>Email</label>: {{customer.email}}</div>
         <div><label>CC / NIT</label>: {{customer.id_document}}</div>

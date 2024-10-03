@@ -1,0 +1,44 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Factura{% endblock title %}
+
+{% block content %}
+<h1>Invoice</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        <label>Numero de factura</label>
+        {{ form.number_bill }}
+    </div>
+    <div>
+        <label>Cliente</label>
+        {% include "customer/detail.html" with customer=customer %}
+    </div>
+    <div>
+        <label>Fecha de facturación</label>
+        {{ form.sale_date }}
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <h2>Productos</h2>
+            <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
+            <div id="search-results">
+                {% include "product/partials/list.html" %}
+            </div>
+        </div>
+        <div class="col-sm-4">
+            {% include "invoices/cart/list.html" %}
+        </div>
+    </div>
+    <div>
+        <label>Total</label>
+        {{ form.total_amount }}
+    </div>
+    <input type="submit" value="Guardar">
+</form>
+
+
+{% endblock content %}

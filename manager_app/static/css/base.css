@@ -1,0 +1,14 @@
+body{
+    background-color: #fff;
+    height: 100%;
+    width: 100%;
+}
+
+a{
+    text-decoration: none;
+    list-style: none;
+}
+
+.main{
+    padding: 40px 50px 30px 50px;
+}

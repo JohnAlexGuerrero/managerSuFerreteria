@@ -12,7 +12,7 @@ def calculate_total(value, qty):
 
 @register.filter(name='format_price')
 def format_price(value):
-    return f'$ {value:,.1f}'
+    return f'{value:,.1f}'
 
 @register.filter(name='format_capitalize')
 def format_capitalize(description):

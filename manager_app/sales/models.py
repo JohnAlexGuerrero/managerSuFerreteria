@@ -74,13 +74,9 @@ class Order(models.Model):
             product=self.product
         ).order_by('-id').first()
 
-        totalBal = 0
-        if inventory:
-            totalBal = inventory.total_balance_quantity - self.quantity
-        
         Inventory.objects.create(
             product = self.product,
             sale_quantity = self.quantity,
             purchase_quantity = 0,
-            total_balance_quantity = totalBal
+            total_balance_quantity = (inventory.total_balance_quantity - self.quantity) if inventory else 0
         )

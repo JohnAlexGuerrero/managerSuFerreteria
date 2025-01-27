@@ -176,12 +176,19 @@ class Inventory(models.Model):
 
     def product_unit(self):
         return self.product.unit.title
-
-    # def purchase_date(self):
-    #     if self.purchase:
-    #         return self.purchase.purchase_date
-    '''
-    def sale_date(self):
-        if self.sale:
-            return self.sale.sale_date
-    '''
+    
+    def save(self, *args, **kwargs):
+        inventory = Inventory.objects.filter(
+            product=self.product
+        ).order_by('-id').first()
+        
+        if inventory:
+            if self.purchase_quantity > 0:
+                self.total_balance_quantity = inventory.total_balance_quantity + self.purchase_quantity
+            elif self.sale_quantity > 0:
+                self.total_balance_quantity = inventory.total_balance_quantity - self.sale_quantity
+        else:
+            self.total_balance_quantity = self.purchase_quantity
+            
+            
+        super(Inventory, self).save(*args, **kwargs)

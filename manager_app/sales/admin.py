@@ -39,8 +39,11 @@ class BillAdmin(admin.ModelAdmin):
     total_balance_amount = []
 
     def total_sales_amount(self, obj):
-        self.total_balance_amount.append(self.balance(obj))
-        # total_amount_sales = Bill.objects.filter(sale_date=obj.sale_date).aggregate(Sum('total_amount'))['total_amount__sum']
+        # cuenta el total de facturas a tener encuenta
+        bill_count = Bill.objects.all().count()
+        
+        if len(self.total_balance_amount) < bill_count:
+            self.total_balance_amount.append(self.balance(obj))
         return sum(self.total_balance_amount)
     
     def balance(self, obj):

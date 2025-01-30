@@ -1,5 +1,8 @@
 from django.db import models
 from django.urls import reverse
+
+from django.db.models import Sum
+
 from main.models import Product, Inventory
 
 # Create your models here.
@@ -49,7 +52,7 @@ class Bill(models.Model):
         return Order.objects.filter(bill_id=self.id)
 
 class Order(models.Model):
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name='bills')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.FloatField()
     price = models.FloatField()
@@ -67,7 +70,8 @@ class Order(models.Model):
         super(Order, self).save(*args, **kwargs)
         
         bill = Bill.objects.get(id=self.bill.id)
-        bill.total_amount += self.total_amount
+        bill.total_amount = Order.objects.filter(bill__id=self.bill.id).aggregate(Sum('total_amount'))['total_amount__sum'] 
+        print(bill.total_amount) #self.total_amount
         bill.save()
         
         inventory = Inventory.objects.filter(

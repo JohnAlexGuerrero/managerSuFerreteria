@@ -30,9 +30,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 # @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
-    list_display = ['number_bill', 'customer','total_amount', 'sale_date','is_paid','total_sales_amount','balance']
+    list_display = ['number_bill', 'customer','total_amount', 'sale_date','is_paid','total_sales_amount','balance','is_delivery']
     search_fields = ['number_bill','sale_date']
-    list_editable = ['is_paid']
+    list_editable = ['is_paid','is_delivery']
     list_filter = ['sale_date']
     list_per_page = 10
     actions = ['export_sales_csv',]

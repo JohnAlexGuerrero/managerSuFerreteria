@@ -29,6 +29,7 @@ class Bill(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     total_amount = models.FloatField(blank=True, null=True, default=0)
     is_paid = models.BooleanField(default=False)
+    is_delivery = models.BooleanField(default=False)
     
     sale_date = models.DateField(auto_now_add=False)
 

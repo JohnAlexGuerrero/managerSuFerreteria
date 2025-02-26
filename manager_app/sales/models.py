@@ -54,7 +54,7 @@ class Bill(models.Model):
 
 class Order(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name='bills')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order')
     quantity = models.FloatField()
     price = models.FloatField()
     total_amount = models.FloatField(editable=False, default=0)

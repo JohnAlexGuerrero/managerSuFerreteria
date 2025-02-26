@@ -1,7 +1,9 @@
 from django.contrib import admin
 from .models import Product, Unit, Vendor, Purchase,Tax, Inventory, Category, ListPrice
 from .forms import TaxForm
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
+
+from sales.models import Order
 
 # Register your models here.
 
@@ -88,9 +90,17 @@ class PurchaseAdmin(admin.ModelAdmin):
 @admin.register(Inventory)
 class InventoryAdmin(admin.ModelAdmin):
     search_fields = ['product__title',]
-    list_display = ['product','purchase_quantity','sale_quantity','product_unit','total_balance_quantity','created_at']
+    list_display = ['product','purchase_quantity','sale_quantity','product_unit','total_balance_quantity','created_at','display_order']
     list_filter = ['product__category']
     list_per_page = 10
     ordering = ('-id',)
 
-    
+    def display_order(self, obj):
+        order = Order.objects.filter(
+            Q(product=obj.product) & Q(quantity=obj.sale_quantity)
+        ).first()
+        
+        if order:
+            return f'out: {order}'
+        else:
+            return 'in'

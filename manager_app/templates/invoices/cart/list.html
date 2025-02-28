@@ -37,10 +37,10 @@
                       </svg>
                     </button>
                   </div>
-                  <label class="price small">${{item.price|calc_price_unit:item.list_price|format_price}}</label>
+                  {% comment %} <label class="price small">${{item.price|calc_price_unit:item.list_price|format_price}}</label> {% endcomment %}
                 </div>
                 <p class="price small">
-                  Total ${{item.price|calc_price_unit:item.list_price|calculate_total:item.qty|format_price}}
+                  {% comment %} Total ${{item.price|calc_price_unit:item.list_price|calculate_total:item.qty|format_price}} {% endcomment %}
                 </p>
                 {% endfor %}
             </ul>

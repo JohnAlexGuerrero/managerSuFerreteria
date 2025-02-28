@@ -18,6 +18,7 @@ from cash_register.forms import TransactionForm
 from django.http import JsonResponse
 
 from django.views.generic import ListView
+from django.views.generic import DetailView
 
 #variables locales
 items_in_order = []
@@ -27,15 +28,15 @@ class BillListView(ListView):
     model = Bill
     template_name = "invoices/index.html"
 
-
-def home(request):
-    template_name = 'invoices/index.html'
+class BillDetailView(DetailView):
+    model = Bill
+    template_name = "invoices/detail.html"
     
-    context = {
-        "today": datetime.now().strftime('%d-%B-%Y')
-    }
+    def get_context_data(self, **kwargs) -> dict[str, object]:
+        context = super().get_context_data(**kwargs)
+        context["orders"] = self.object.orders.all()
+        return context
     
-    return render(request, template_name, context)
 
 
 # def total_balance(request):

@@ -53,15 +53,15 @@ class Bill(models.Model):
         return Order.objects.filter(bill_id=self.id)
 
 class Order(models.Model):
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name='bills')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order')
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name='orders')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.FloatField()
     price = models.FloatField()
     total_amount = models.FloatField(editable=False, default=0)
 
     class Meta:
         verbose_name = ("Bill")
-        verbose_name_plural = ("5. Pedidos")
+        verbose_name_plural = ("Pedidos")
     
     def __str__(self) -> str:
         return self.bill.number_bill

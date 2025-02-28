@@ -14,7 +14,7 @@ class Transaction(models.Model):
         OTROS = "OTROS"
         
     transaction_date = models.DateTimeField(auto_now_add=False)
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, null=True, blank=True)    
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, null=True, blank=True, related_name='transactions')    
     total = models.FloatField(default=0)
     payment_method = models.CharField(max_length=50, choices=PaymentMethod, default=PaymentMethod.EFECTIVO)
     

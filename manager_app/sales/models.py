@@ -51,6 +51,7 @@ class Bill(models.Model):
     
     def getItemsInOrder(self):
         return Order.objects.filter(bill_id=self.id)
+    
 
 class Order(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name='orders')

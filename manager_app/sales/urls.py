@@ -1,10 +1,10 @@
 from django.urls import path
 from sales.views import home, invoice, add_cart, add_order, payment_invoice, list_order, plus_item, minus_item
 from sales.views import search_customer, filters_customers, select_customer
-from sales.views import BillCreateView
+from sales.views import BillCreateView, BillListView
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', BillListView.as_view(), name='home'),
     # path('invoices/new/', create_invoice, name='new_invoice'),
     path('invoices/new/', BillCreateView.as_view(), name='new_invoice'),
     path('invoice/<int:pk>/', invoice, name='invoice'),

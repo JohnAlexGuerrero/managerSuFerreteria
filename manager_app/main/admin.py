@@ -4,6 +4,7 @@ from .forms import TaxForm
 from django.db.models import Count, Sum, Q
 
 from sales.models import Order
+from main.models import Purchase
 
 # Register your models here.
 
@@ -96,11 +97,19 @@ class InventoryAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
     def display_order(self, obj):
-        order = Order.objects.filter(
-            Q(product=obj.product) & Q(quantity=obj.sale_quantity)
-        ).first()
+        if obj.purchase_quantity > 0:
+            purchase = Purchase.objects.filter(
+                Q(product=obj.product) & Q(purchase_date=obj.created_at)
+            ).first()
+            
+            if purchase is None:
+                return 'in: inventario inicial'
+            
+            return f'in: {purchase}'
         
-        if order:
+        if obj.sale_quantity > 0:
+            order = Order.objects.filter(
+                Q(product=obj.product) & Q(quantity=obj.sale_quantity)
+            ).first()
             return f'out: {order}'
-        else:
-            return 'in'
+                        

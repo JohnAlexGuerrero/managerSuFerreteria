@@ -17,17 +17,23 @@ from cash_register.forms import TransactionForm
 
 from django.http import JsonResponse
 
+from django.views.generic import ListView
+
 #variables locales
 items_in_order = []
 
 # Create your views here.
+class BillListView(ListView):
+    model = Bill
+    template_name = "invoices/index.html"
+
+
 def home(request):
     template_name = 'invoices/index.html'
     
     context = {
         "today": datetime.now().strftime('%d-%B-%Y')
     }
-    print(context)
     
     return render(request, template_name, context)
 

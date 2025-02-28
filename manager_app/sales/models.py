@@ -31,7 +31,7 @@ class Bill(models.Model):
     is_paid = models.BooleanField(default=False)
     is_delivery = models.BooleanField(default=False)
     
-    sale_date = models.DateField(auto_now_add=False)
+    sale_date = models.DateTimeField(auto_now_add=False)
 
     class Meta:
         verbose_name = ("Bill")
@@ -39,10 +39,10 @@ class Bill(models.Model):
         ordering = ('-number_bill',)
 
     def __str__(self):
-        return self.number_bill
+        return self.number_bill.capitalize()
 
     def get_absolute_url(self):
-        return reverse("Bill_detail", kwargs={"pk": self.pk})
+        return reverse("invoice", kwargs={"pk": self.pk})
     
     def subTotal(self):
         orders = Order.objects.filter(bill__id=self.id)

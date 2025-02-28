@@ -75,7 +75,7 @@ class Category(models.Model):
         return self.name_category
 
     def count_items(self):
-        return Category.objects.filter(name_category=self).aggregate(Count('product'))['product__count']
+        return self.items.count()
     
     
 class Product(models.Model):
@@ -83,7 +83,7 @@ class Product(models.Model):
     codebar = models.CharField(max_length=15, unique=True)
     photo = models.ImageField(upload_to="product/", null=True, blank=True)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True,blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True,blank=True, related_name="items")
     price = models.FloatField(null=True,blank=True, default=0)
     list_price = models.ForeignKey(ListPrice, on_delete=models.CASCADE, default=1)
     updated_at = models.DateField(auto_now_add=True)
@@ -176,12 +176,19 @@ class Inventory(models.Model):
 
     def product_unit(self):
         return self.product.unit.title
-
-    # def purchase_date(self):
-    #     if self.purchase:
-    #         return self.purchase.purchase_date
-    '''
-    def sale_date(self):
-        if self.sale:
-            return self.sale.sale_date
-    '''
+    
+    def save(self, *args, **kwargs):
+        inventory = Inventory.objects.filter(
+            product=self.product
+        ).order_by('-id').first()
+        
+        if inventory:
+            if self.purchase_quantity > 0:
+                self.total_balance_quantity = inventory.total_balance_quantity + self.purchase_quantity
+            elif self.sale_quantity > 0:
+                self.total_balance_quantity = inventory.total_balance_quantity - self.sale_quantity
+        else:
+            self.total_balance_quantity = self.purchase_quantity
+            
+            
+        super(Inventory, self).save(*args, **kwargs)

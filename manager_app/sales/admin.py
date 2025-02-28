@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from django.http import HttpRequest
 
 from sales.models import Bill, Customer, Order
+from cash_register.models import Transaction
+
 from django.db.models import Sum, Count
 
 import csv
@@ -15,8 +17,8 @@ admin.site.register(Customer)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['bill','product','quantity','unit','price','total_amount', 'pct_ganancia']
     list_per_page = 10
-    list_filter = ['bill__sale_date',]
-    search_fields = ['product__title','bill__number_bill']
+    list_filter = ['bill__number_bill']
+    search_fields = ['product__title','bill__number_bill','bill__sale_date']
 
     def unit(self, obj):
         return obj.product.unit
@@ -28,18 +30,27 @@ class OrderAdmin(admin.ModelAdmin):
 
 # @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
-    total_amount = []
-    list_display = ['number_bill', 'customer','total_amount', 'sale_date','is_paid','total_sales_amount']
+    list_display = ['number_bill', 'customer','total_amount', 'sale_date','is_paid','total_sales_amount','balance','is_delivery']
     search_fields = ['number_bill','sale_date']
-    # list_editable = ['is_paid']
+    list_editable = ['is_paid','is_delivery']
     list_filter = ['sale_date']
     list_per_page = 10
     actions = ['export_sales_csv',]
+    total_balance_amount = []
 
     def total_sales_amount(self, obj):
-        total_amount_sales = Bill.objects.filter(sale_date=obj.sale_date).aggregate(Sum('total_amount'))['total_amount__sum']
-        return total_amount_sales
+        # cuenta el total de facturas a tener encuenta
+        bill_count = Bill.objects.all().count()
+        
+        if len(self.total_balance_amount) < bill_count:
+            self.total_balance_amount.append(self.balance(obj))
+        return sum(self.total_balance_amount)
     
+    def balance(self, obj):
+        payments = Transaction.objects.filter(bill__number_bill=obj.number_bill).aggregate(Sum('total'))['total__sum']
+        if payments:
+            return obj.total_amount - payments
+        return obj.total_amount
     
     #actions for admin sales
     @admin.action(description='Export to CSV')

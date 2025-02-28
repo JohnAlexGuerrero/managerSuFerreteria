@@ -1,13 +1,13 @@
 from django.urls import path
-from sales.views import home, invoice, add_cart, add_order, payment_invoice, list_order, plus_item, minus_item
+from sales.views import invoice, add_cart, add_order, payment_invoice, list_order, plus_item, minus_item
 from sales.views import search_customer, filters_customers, select_customer
-from sales.views import BillCreateView
+from sales.views import BillCreateView, BillListView, BillDetailView
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', BillListView.as_view(), name='home'),
     # path('invoices/new/', create_invoice, name='new_invoice'),
     path('invoices/new/', BillCreateView.as_view(), name='new_invoice'),
-    path('invoice/<int:pk>/', invoice, name='invoice'),
+    path('invoice/<int:pk>/', BillDetailView.as_view(), name='invoice'),
     path('invoices/p/<int:pk>/add/', add_cart, name='add_cart'),
     path('invoices/order/add/', add_order, name='add_order'),
     path('invoices/order/<int:pk>/plus/', plus_item, name='plus_item'),

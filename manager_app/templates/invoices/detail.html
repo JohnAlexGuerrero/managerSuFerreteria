@@ -1,0 +1,70 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+{% load humanize %}
+{% load invoices_filters %}
+
+{% block title %}
+    detalle factura {{ object }}
+{% endblock title %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h2>{{ object }}</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <p>Cliente: {{ object.customer }}</p>
+                    <p>Telefono de contacto: {{ object.customer_mobile }}</p>
+                    <p>Dirección: {{ object.customer.customer_address }}</p>
+                    <p>Correo electrónico: {{ object.customer.email }}</p>
+                </div>
+                <div class="col-6">
+                    <p>
+                        Numero de Factura: <strong>{{ object }}</strong>
+                    </p>
+                    <p>Fecha de Facturación: {{ object.sale_date|naturaltime }}</p>
+                    <p>Estado: {{ object.is_paid|status_invoice }}</p>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Referencia</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Unidad</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for obj in orders %}
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>{{ obj.product.codebar }}</td>
+                      <td>{{ obj.product }}</td>
+                      <td>{{ obj.product.unit }}</td>
+                      <td>{{ obj.quantity }}</td>
+                      <td>$ {{ obj.price|intcomma }}</td>
+                      <td>$ {{ obj.total_amount|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>Total</td>
+                        <td>
+                            <strong>$ {{ object.total_amount|intcomma }}</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

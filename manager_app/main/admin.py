@@ -1,7 +1,10 @@
 from django.contrib import admin
 from .models import Product, Unit, Vendor, Purchase,Tax, Inventory, Category, ListPrice
 from .forms import TaxForm
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
+
+from sales.models import Order
+from main.models import Purchase
 
 # Register your models here.
 
@@ -51,13 +54,17 @@ class TaxAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['codebar','title','balance_stock','unit','vlr_unit','list_price']
+    list_display = ['codebar','title','balance_stock','unit','price','vlr_unit','list_price', 'total_cost']
     search_fields = ['title','category__name_category']
     list_filter = ['category']
     list_per_page = 10
     
     # change_list_template = 'product/product_change_list.html'
-    
+    def total_cost(self, obj):
+        item = Inventory.objects.filter(product=obj.id).order_by('-id').first()
+        if item:
+            return obj.price * item.total_balance_quantity
+        return 0
 
     def vlr_unit(self, obj):
         return f'$ {round(obj.price / obj.list_price.list_price_value):,.0f}'
@@ -84,9 +91,25 @@ class PurchaseAdmin(admin.ModelAdmin):
 @admin.register(Inventory)
 class InventoryAdmin(admin.ModelAdmin):
     search_fields = ['product__title',]
-    list_display = ['product','purchase_quantity','sale_quantity','product_unit','total_balance_quantity','created_at']
+    list_display = ['product','purchase_quantity','sale_quantity','product_unit','total_balance_quantity','created_at','display_order']
     list_filter = ['product__category']
     list_per_page = 10
     ordering = ('-id',)
 
-    
+    def display_order(self, obj):
+        if obj.purchase_quantity > 0:
+            purchase = Purchase.objects.filter(
+                Q(product=obj.product) & Q(purchase_date=obj.created_at)
+            ).first()
+            
+            if purchase is None:
+                return 'in: inventario inicial'
+            
+            return f'in: {purchase}'
+        
+        if obj.sale_quantity > 0:
+            order = Order.objects.filter(
+                Q(product=obj.product) & Q(quantity=obj.sale_quantity)
+            ).first()
+            return f'out: {order}'
+                        

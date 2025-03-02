@@ -29,7 +29,7 @@
                             <p>
                                 Numero de Factura: <strong>{{ object }}</strong>
                             </p>
-                            <p>Fecha de Facturación: {{ object.sale_date|naturaltime }}</p>
+                            <p>Fecha de Facturación: {{ object.sale_date }}</p>
                             <p>Estado: {{ object.is_paid|status_invoice }}</p>
                             <p>Entrega: {{ object.is_delivery|delivery_invoice }}</p>
                         </div>
@@ -38,7 +38,6 @@
                     <table class="table mt-3">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Referencia</th>
                             <th scope="col">Descripción</th>
                             <th scope="col">Unidad</th>
@@ -50,7 +49,6 @@
                         <tbody>
                             {% for obj in orders %}
                             <tr>
-                            <th scope="row">1</th>
                             <td>{{ obj.product.codebar }}</td>
                             <td>{{ obj.product }}</td>
                             <td>{{ obj.product.unit }}</td>
@@ -92,21 +90,21 @@
                         </tr>
                     {% endfor %}
                     <tr>
-                        <td>Total</td>
+                        <td>Total Factura</td>
                         <td>
                             <strong>$  {{ object.total_amount|intcomma }}</strong>
                         </td>
                     </tr>
                     <tr>
-                        <td>Abonos</td>
+                        <td>Total Abonos</td>
                         <td>
-                            <strong>$ -{{ transactions.first.total_sum|intcomma }}</strong>
+                            <strong>$ -{{ transactions|get_total_sum|intcomma }}</strong>
                         </td>
                     </tr>
                     <tr>
-                        <td>Saldo</td>
+                        <td>Saldo Factura</td>
                         <td>
-                            <strong>$ {{ object.total_amount|get_balance_invoice:transactions.first.total_sum|intcomma }}</strong>
+                            <strong>$ {{ transactions|get_total_sum|get_balance_invoice:object.total_amount|intcomma }}</strong>
                         </td>
                     </tr>
                 {% else %}

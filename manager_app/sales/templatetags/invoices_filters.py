@@ -16,4 +16,9 @@ def delivery_invoice(value):
 
 @register.filter(name='get_balance_invoice')
 def get_balance_invoice(value_1, value_2):
-    return value_1 - value_2
+    return - value_1 + value_2
+
+@register.filter(name='get_total_sum')
+def get_total_sum(objects):
+    total_sum = [x.total for x in objects]
+    return sum(total_sum)

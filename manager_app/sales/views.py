@@ -36,7 +36,7 @@ class BillDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["orders"] = self.object.orders.all()
         context['transactions'] = self.object.transactions.all().annotate(total_sum=Sum('total'))
-        # print(context['transactions'].values())
+        print(context['transactions'].values())
         return context
     
 
@@ -94,10 +94,19 @@ class BillCreateView(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
         context["customer"] = Customer.objects.first()
-        context['items'] = Product.objects.all()
+        context['items'] = self.paginator_products() #Product.objects.all().order_by('title')[:10]
         context['orders'] = items_in_order
+        print(context['items'])
         return context
+    
+    def paginator_products(self, *args, **kwargs):
+        page_number = self.request.GET.get('page')
+        products = Product.objects.all().order_by('title')
+        paginator = Paginator(products, 10)
+        page_obj = paginator.get_page(page_number)
+        return page_obj
     
 
 

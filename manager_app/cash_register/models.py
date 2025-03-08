@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Sum
+
 from django.urls import reverse
 from sales.models import Bill
 
@@ -14,7 +16,7 @@ class Transaction(models.Model):
         OTROS = "OTROS"
         
     transaction_date = models.DateTimeField(auto_now_add=False)
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, null=True, blank=True, related_name='transactions')    
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, null=True, blank=True, related_name='pays')    
     total = models.FloatField(default=0)
     payment_method = models.CharField(max_length=50, choices=PaymentMethod, default=PaymentMethod.EFECTIVO)
     
@@ -29,12 +31,14 @@ class Transaction(models.Model):
         return reverse("Transaction_detail", kwargs={"pk": self.pk})
     
     def save(self, *args, **kwargs):
-        bill = Bill.objects.get(id=self.bill.id)
-        if bill.is_paid != True:
-            balance_res = bill.total_amount - self.total
+        super().save(*args, **kwargs)
+        
+        if self.bill.is_paid != True:
+            total_pay = self.bill.pays.all().aggregate(Sum('total'))['total__sum']
+            balance_res = total_pay - self.total
             if balance_res == 0:
-                bill.is_paid = True
-                bill.save()
-            return super().save(*args, **kwargs)
+                self.bill.is_paid = True
+                self.bill.save()
+            return ''
                 
 

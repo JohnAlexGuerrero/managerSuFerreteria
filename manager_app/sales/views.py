@@ -35,7 +35,7 @@ class BillDetailView(DetailView):
     def get_context_data(self, **kwargs) -> dict[str, object]:
         context = super().get_context_data(**kwargs)
         context["orders"] = self.object.orders.all()
-        context['transactions'] = self.object.transactions.all().annotate(total_sum=Sum('total'))
+        context['transactions'] = self.object.pays.all().annotate(total_sum=Sum('total'))
         print(context['transactions'].values())
         return context
     

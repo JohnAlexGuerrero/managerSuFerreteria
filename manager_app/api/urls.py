@@ -11,7 +11,7 @@ urlpatterns = [
     path('sales/list-invoices/balance', total_balance, name='list-invoices-balance'),
     
     path('inventory/products/',list_products,name='products'),
-    path('inventory/products/search',filter_products,name='filter_products'),
+    path('inventory/products/search', filter_products, name='filter_products'),
     
     
     path('export_csv/', export_excel, name='export_csv'),

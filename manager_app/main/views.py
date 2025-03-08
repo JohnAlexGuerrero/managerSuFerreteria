@@ -73,7 +73,12 @@ def inventory_create(request, *args, **kwargs):
     return render(request, name_template, context)
 
 def list_products(request):
-    items = Product.objects.all()#.order_by('category')
+    products = Product.objects.all()#.order_by('category')
+    paginator = Paginator(products, 10)
+    page_number = request.GET.get('page')
+    items = paginator.get_page(page_number)
+    
+    print(items.values())
     return JsonResponse({
         "items":[
             {
@@ -86,13 +91,14 @@ def list_products(request):
         ]
     })
 
+# API
 #view para buscar productos
 def filter_products(request):
     name_template = 'product/partials/list.html'
-    items = Product.objects.filter(title__contains=request.GET.get('query'))
-
+    products = Product.objects.filter(title__contains=request.GET.get('query'))
+    
     context = {
-        "items":items
+        "items":products
     }
     return render(request, name_template, context)
 

@@ -21,12 +21,56 @@
         <label>Fecha de facturación</label>
         {{ form.sale_date }}
     </div>
+
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-7">
             <h2>Productos</h2>
-            <input type="text" name="query" hx-get="{% url "filter_products" %}" hx-trigger="input" hx-target="#search-results">
-            <div id="search-results">
-                {% include "product/partials/list.html" %}
+            <input 
+                type="text" 
+                name="query"
+                class="form-control p-2 mb-4" 
+                hx-get="{% url "filter_products" %}"
+                hx-trigger="input"
+                hx-target="#search-results"
+            >
+            <div class="container">
+                <div>
+                    {% include "product/partials/list.html" %}
+                </div>        
+                <table>
+                    <thead>
+                        <th>Codigo</th>
+                        <th>Descripcion</th>
+                        <th>Disponible</th>
+                        <th>Unidad</th>
+                        <th>Precio</th>
+                        <th>Total</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" name="codebar" value="">
+                            </td>
+                            <td>
+                                <input type="text" name="title" value="">
+                            </td>
+                            <td>
+                                <input type="text" name="qty" value="">
+                            </td>
+                            <td>
+                                <input type="text" name="price" value="">
+                            </td>
+                            <td>
+                                <input type="text" name="total" value="">
+                            </td>
+                            <td>
+                                <button hx-target="#cart-list-shopping" hx-swap="outerHTML">
+                                    click
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="col-sm-4">

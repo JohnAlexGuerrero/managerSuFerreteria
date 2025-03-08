@@ -11,59 +11,109 @@
 
 {% block content %}
 
-<div class="card">
-    <div class="card-body">
-        <h2>{{ object }}</h2>
-        <div class="container">
-            <div class="row">
-                <div class="col-6">
-                    <p>Cliente: {{ object.customer }}</p>
-                    <p>Telefono de contacto: {{ object.customer_mobile }}</p>
-                    <p>Dirección: {{ object.customer.customer_address }}</p>
-                    <p>Correo electrónico: {{ object.customer.email }}</p>
-                </div>
-                <div class="col-6">
-                    <p>
-                        Numero de Factura: <strong>{{ object }}</strong>
-                    </p>
-                    <p>Fecha de Facturación: {{ object.sale_date|naturaltime }}</p>
-                    <p>Estado: {{ object.is_paid|status_invoice }}</p>
+<div class="row">
+    <div class="col-8">
+        <div class="card w-100">
+            <div class="card-body">
+                <h2>{{ object }}</h2>
+                <hr>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6 p-3">
+                            <p>Cliente: {{ object.customer }}</p>
+                            <p>Telefono de contacto: {{ object.customer_mobile }}</p>
+                            <p>Dirección: {{ object.customer.customer_address }}</p>
+                            <p>Correo electrónico: {{ object.customer.email }}</p>
+                        </div>
+                        <div class="col-6 p-3">
+                            <p>
+                                Numero de Factura: <strong>{{ object }}</strong>
+                            </p>
+                            <p>Fecha de Facturación: {{ object.sale_date }}</p>
+                            <p>Estado: {{ object.is_paid|status_invoice }}</p>
+                            <p>Entrega: {{ object.is_delivery|delivery_invoice }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <table class="table mt-3">
+                        <thead>
+                        <tr>
+                            <th scope="col">Referencia</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Unidad</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in orders %}
+                            <tr>
+                            <td>{{ obj.product.codebar }}</td>
+                            <td>{{ obj.product }}</td>
+                            <td>{{ obj.product.unit }}</td>
+                            <td>{{ obj.quantity }}</td>
+                            <td>$ {{ obj.price|intcomma }}</td>
+                            <td>$ {{ obj.total_amount|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td>Total</td>
+                                <td>
+                                    <strong>$ {{ object.total_amount|intcomma }}</strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <table class="table">
+        </div>
+    </div>
+    <div class="col-4">
+        <div>
+            <h2>Pagos</h2>
+            <table>
                 <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Referencia</th>
-                    <th scope="col">Descripción</th>
-                    <th scope="col">Unidad</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Total</th>
-                  </tr>
+                    <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Forma de Pago</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    {% for obj in orders %}
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>{{ obj.product.codebar }}</td>
-                      <td>{{ obj.product }}</td>
-                      <td>{{ obj.product.unit }}</td>
-                      <td>{{ obj.quantity }}</td>
-                      <td>$ {{ obj.price|intcomma }}</td>
-                      <td>$ {{ obj.total_amount|intcomma }}</td>
-                    </tr>
+                {% if transactions %}
+                    {% for t in transactions %}
+                        <tr>
+                            <td>{{ t.transaction_date }}</td>
+                            <td>$ {{ t.total|intcomma }}</td>
+                            <td>{{ t.payment_method }}</td>
+                        </tr>
                     {% endfor %}
                     <tr>
-                        <td>Total</td>
+                        <td>Total Factura</td>
                         <td>
-                            <strong>$ {{ object.total_amount|intcomma }}</strong>
+                            <strong>$  {{ object.total_amount|intcomma }}</strong>
                         </td>
                     </tr>
+                    <tr>
+                        <td>Total Abonos</td>
+                        <td>
+                            <strong>$ -{{ transactions|get_total_sum|intcomma }}</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Saldo Factura</td>
+                        <td>
+                            <strong>$ {{ transactions|get_total_sum|get_balance_invoice:object.total_amount|intcomma }}</strong>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
 

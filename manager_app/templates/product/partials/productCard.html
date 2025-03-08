@@ -1,0 +1,19 @@
+{% load static %}
+{% load humanize %}
+
+<div class="card-product">
+    <div class="image"><span class="text">{{ item.title }}</span></div>
+      <span class="title">{{item.title}}</span>
+      <span class="price">${{ item.price|intcomma }}</span>
+</div>
+
+                {% comment %} <td>{{item.codebar}}</td> {% endcomment %}
+                {% comment %} <td>{{item.get_total_balance_quantity}}</td> {% endcomment %}
+                
+                {% comment %} <td>{{item.unit.title}}</td> {% endcomment %}
+                {% comment %} <td></td> {% endcomment %}
+                {% comment %} <td>
+                    <button hx-get="{% url "add_cart" pk=item.id %}" hx-target="#cart-list-shopping" hx-swap="outerHTML">
+                        click
+                    </button>
+                </td> {% endcomment %}

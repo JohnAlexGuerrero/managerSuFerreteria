@@ -217,6 +217,18 @@ def list_order(request, *args, **kwargs):
     }
     
     return render(request, template_name, context)
+
+# view invoice filter
+def filter_invoices(request):
+    template_name = 'invoices/index.html'
+    context = {}
+    
+    invoices = Bill.objects.filter(
+        Q(customer__customer_name__icontains=request.POST.get('query'))
+    )
+    
+    context['object_list'] = invoices
+    return render(request, template_name, context)
                 
 #view customer search
 def search_customer(request):

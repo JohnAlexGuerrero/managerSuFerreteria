@@ -36,7 +36,7 @@ class BillDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["orders"] = self.object.orders.all()
         context['transactions'] = self.object.pays.all().annotate(total_sum=Sum('total'))
-        print(context['transactions'].values())
+        context['form'] = TransactionForm
         return context
     
 

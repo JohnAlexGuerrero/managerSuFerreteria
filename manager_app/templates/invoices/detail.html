@@ -72,6 +72,9 @@
     <div class="col-4">
         <div>
             <h2>Pagos</h2>
+
+            {% include "includes/modal.html" with title='Agregar' form=form url='pay_invoice_new' %}
+
             <table>
                 <thead>
                     <tr>

@@ -1,0 +1,7 @@
+<div>
+    <form method='POST' action="{% url url pk=1 %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="guardar">
+    </form>
+</div>

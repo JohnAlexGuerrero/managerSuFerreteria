@@ -1,7 +1,8 @@
 from django.urls import path
 from sales.views import invoice, add_cart, add_order, payment_invoice, list_order, plus_item, minus_item
-from sales.views import search_customer, filters_customers, select_customer
+from sales.views import search_customer, filters_customers, select_customer, filter_invoices
 from sales.views import BillCreateView, BillListView, BillDetailView
+from cash_register.views import TransactionCreateView
 
 urlpatterns = [
     path('', BillListView.as_view(), name='home'),
@@ -19,4 +20,8 @@ urlpatterns = [
     path('customers/<int:pk>/select/', select_customer, name='customer_selected'),
 
     path('invoices/factura/<int:pk>/payment/', payment_invoice, name='invoice_pay'),
+    
+    path('invoices/search', filter_invoices, name='filter_invoices'),
+    
+    path('inv/<int:pk>/new-pay/', TransactionCreateView.as_view(), name='pay_invoice_new'),
 ]

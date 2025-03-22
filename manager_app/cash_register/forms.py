@@ -6,3 +6,7 @@ class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = ("transaction_date","bill","total","payment_method")
+        
+        widgets = {
+            "transaction_date": forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
+        }

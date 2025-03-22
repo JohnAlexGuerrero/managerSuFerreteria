@@ -36,7 +36,7 @@ class BillDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["orders"] = self.object.orders.all()
         context['transactions'] = self.object.pays.all().annotate(total_sum=Sum('total'))
-        print(context['transactions'].values())
+        context['form'] = TransactionForm
         return context
     
 
@@ -216,6 +216,18 @@ def list_order(request, *args, **kwargs):
         "orders": orders,
     }
     
+    return render(request, template_name, context)
+
+# view invoice filter
+def filter_invoices(request):
+    template_name = 'invoices/index.html'
+    context = {}
+    
+    invoices = Bill.objects.filter(
+        Q(customer__customer_name__icontains=request.POST.get('query'))
+    )
+    
+    context['object_list'] = invoices
     return render(request, template_name, context)
                 
 #view customer search

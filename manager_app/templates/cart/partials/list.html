@@ -1,0 +1,24 @@
+{% load humanize %}
+
+<ul  id="itemsCart">
+    {% for i in items %}
+        <li>
+            <form>
+                {% csrf_token %}
+                <input type="text" value="{{i.id}}" name="pk">
+                <p>{{i.title}}</p>
+                <input type="number" value="{{i.qty}}" min="0" name="qty">
+                <span 
+                    hx-post="{% url "add_item_cart" %}"
+                    hx-trigger="click"
+                    hx-swap="outerHTML"
+                    hx-target="#itemsCart"
+                >+</span>
+                <p>$ {{i.price |intcomma}}</p>
+            </form>
+        </li>
+    {% endfor %}
+    <li>
+        <p>$ {{total|intcomma}}</p>
+    </li>
+</ul>

@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block title %}Cart{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h3>Inventario</h3>
+        <div>
+            <div>
+                <input 
+                    type="text" placeholder="Buscar producto por nombre o codigo"
+                    hx-get="{% url "filter-products" %}"
+                    hx-target="#items"
+                    hx-swap="outerHTML"
+                    hx-trigger="input changed delay:1s"
+                    name="q"
+                >
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Disponible</th>
+                        <th scope="col">Unidad</th>
+                        <th scope="col">Vr. Unit</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                {% include "product/partials/list.html" %}
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h3>Cart</h3>
+
+        {% include "includes/cart.html" %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script></script>
+{% endblock js %}

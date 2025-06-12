@@ -3,6 +3,8 @@ from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from main.models import Product
 
+import asyncio
+
 items_in_order = []
 
 class CartView(TemplateView):
@@ -29,7 +31,7 @@ def add_order_product(request, pk):
     context = {
         "message":"producto agregado a carrito de compras.",
         "items": items_in_order,
-        "total": sum([x['total'] for x in items_in_order])
+        "total": sum([x['total'] for x in items_in_order] )
     }
     
     return render(request, name_template, context)
@@ -47,7 +49,25 @@ def add_item_cart(request):
     
     context = {
         "items": items_in_order,
-        "total": sum([x['total'] for x in items_in_order])
+        "total": sum([x['total'] for x in items_in_order] )
     }
     
     return render(request, name_template, context)
+
+def clean_all_items(n):
+    if n == 0:
+        return
+    
+    items_in_order.pop(n-1)
+    clean_all_items(n-1)
+
+def clean_cart(request):
+    template_name = 'cart/partials/list.html'    
+    clean_all_items(len(items_in_order))
+        
+    context = {
+        # "message": 'Pedido borrado.',
+        "items": items_in_order,
+        "total": 0
+    }
+    return render(request, template_name, context)
